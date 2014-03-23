@@ -102,7 +102,6 @@ function! s:apply_vimentry_settings()
             " NOTE: Any windows open or close during VimEnter will not invoke WinEnter,WinLeave event
             " this is why I manually call doautocmd here
             if g:ex_project_browser == "ex"
-
                 " open ex_project window
                 doautocmd BufLeave
                 doautocmd WinLeave
@@ -256,6 +255,27 @@ hi default exCommentLable term=standout ctermfg=darkyellow ctermbg=Red gui=none 
 call vimentry#on( 'reset', function('s:reset_vimentry_settings') )
 call vimentry#on( 'changed', function('s:apply_vimentry_settings') )
 call vimentry#on( 'project_type_changed', function('s:apply_project_type_settings') )
+" }}}
+
+" ex#register_plugin register plugins {{{
+" register Vim builtin window
+call ex#register_plugin( 'help', { 'buftype': 'help' } )
+call ex#register_plugin( 'qf', { 'buftype': 'quickfix' } )
+" register ex-plugins
+call ex#register_plugin( 'explugin', {} )
+call ex#register_plugin( 'exproject', {} )
+" register 3rd-plugins
+call ex#register_plugin( 'minibufexpl', { 'bufname': '-MiniBufExplorer-', 'buftype': 'nofile' } )
+call ex#register_plugin( 'taglist', { 'bufname': '__Tag_List__', 'buftype': 'nofile' } )
+call ex#register_plugin( 'tagbar', { 'bufname': '__TagBar__', 'buftype': 'nofile' } )
+call ex#register_plugin( 'nerdtree', { 'bufname': 'NERD_tree_\d\+', 'buftype': 'nofile' } )
+call ex#register_plugin( 'undotree', { 'bufname': 'undotree_\d\+', 'buftype': 'nowrite' } )
+call ex#register_plugin( 'diff', { 'bufname': 'diffpanel_\d\+', 'buftype': 'nowrite' } )
+call ex#register_plugin( 'gitcommit', {} )
+call ex#register_plugin( 'gundo', {} )
+call ex#register_plugin( 'vimfiler', {} )
+" register empty filetype 
+call ex#register_plugin( '__EMPTY__', { 'bufname': '-MiniBufExplorer-' } )
 " }}}
 
 " vim:ts=4:sw=4:sts=4 et fdm=marker:
