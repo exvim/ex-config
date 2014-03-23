@@ -2,49 +2,76 @@
 
 " s:reset_vimentry_settings {{{2
 function! s:reset_vimentry_settings() 
-    augroup ex_title_string
-        au!
-        au BufNewFile,BufEnter * let &titlestring = ""
-    augroup END
 endfunction
 
 " s:apply_project_type_settings {{{2
 function! s:apply_project_type_settings() 
-    " TODO:
+    set titlestring=%t\ (%{expand(\"%:p:.:h\")}/)
 endfunction
 
 " s:apply_vimentry_settings {{{2
 function! s:apply_vimentry_settings() 
+
+    " ===================================
+    " pre-check 
+    " ===================================
+
+    let cwd = vimentry#get('cwd')
+    let project_name = vimentry#get('project_name')
+
+    if cwd == ''
+        call ex#error("Can't find vimentry setting 'cwd'.")
+        return
+    endif
+
+    if project_name == ''
+        call ex#error("Can't find vimentry setting 'project_name'.")
+        return
+    endif
+
+    let g:exvim_project_name = project_name
+    let g:exvim_project_root = cwd
+    let g:exvim_folder = cwd.'/.exvim.'.project_name
+
+    " set parent working directory
+    silent exec 'cd ' . escape(cwd, " ")
+    let g:exvim_project_name = project_name
+    set titlestring=%{g:exvim_project_name}:\ %t\ (%{expand(\"%:p:.:h\")}/)
+
+    " save the .exvim.xxx/ fullpath to g:exvim_folder 
+    let g:exvim_folder = cwd.'/.exvim.'.project_name
+
+    " create folder .exvim.xxx/ if not exists
+    let path = g:exvim_folder
+    if finddir(path) == ''
+        silent call mkdir(path)
+    endif
+
+    " create folder .exvim.xxx/tmp/ if not exists
+    let path = g:exvim_folder.'/tmp' 
+    if finddir(path) == ''
+        silent call mkdir(path)
+    endif
+
     " ===================================
     " general settings
     " ===================================
 
-    " set title
-    if exists('g:ex_project_name')
-        " change current title 
-        let &titlestring = g:ex_project_name . ' : %t (' . expand("%:p:.:h") . '/)'
-        " define the rule for other title
-        augroup ex_title_string
-            au!
-            au BufNewFile,BufEnter * let &titlestring = g:ex_project_name . ' : %t (' . expand("%:p:.:h") . '/)'
-        augroup END
-    endif
-
     " apply project_type settings
-    if exists('g:ex_project_type')
+    if !vimentry#check('project_type', '')
         " TODO:
-        " let project_types = split( g:ex_project_type, ',' )
+        " let project_types = split( vimentry#get('project_type'), ',' )
         " silent call exUtility#SetProjectFilter ( "file_filter", exUtility#GetFileFilterByLanguage (project_types) )
     endif
 
     " set tag file path
-    if exists( 'g:ex_enable_tags' ) && g:ex_enable_tags == "true"
+    if vimentry#check('enable_tags', 'true')
         " let &tags = &tags . ',' . g:exES_Tag
-        let &tags = escape(g:exvim_files_path."/tags", " ")
+        let &tags = escape(g:exvim_folder."/tags", " ")
     endif
 
     " create .exvim.xxx/hierarchies/
-    if exists( 'g:ex_enable_inherits' ) && g:ex_enable_inherits == "true"
+    if vimentry#check('enable_inherits', 'true')
         " TODO:
         " let inherit_directory_path = g:exES_CWD.'/'.g:exES_vimfiles_dirname.'/.hierarchies' 
         " if finddir(inherit_directory_path) == ''
@@ -52,19 +79,27 @@ function! s:apply_vimentry_settings()
         " endif
     endif
 
+    " set gsearch 
+    if vimentry#check('enable_gsearch', 'true')
+        let gsearch_engine = vimentry#get('gsearch_engine')
+        if gsearch_engine == 'idutils'
+            " TODO: call exUtility#CreateIDLangMap ( exUtility#GetProjectFilter("file_filter") )
+        endif
+    endif
+
     " set cscope file path
-    if exists( 'g:ex_enable_cscope' ) && g:ex_enable_cscope == "true"
+    if vimentry#check('enable_cscope', 'true')
         " TODO: silent call g:exCS_ConnectCscopeFile()
     endif
 
     " macro highlight
-    if exists( 'g:ex_enable_macrohl' ) && g:ex_enable_macrohl == "true" 
+    if vimentry#check('enable_macrohl', 'true')
         " TODO: silent call g:exMH_InitMacroList(g:exES_Macro)
     endif
 
     " TODO:
     " " set vimentry references
-    " if exists ('g:exES_vimentryRefs')
+    " if !vimentry#check('sub_vimentry', '')
     "   for vimentry in g:exES_vimentryRefs
     "     let ref_entry_dir = fnamemodify( vimentry, ':p:h')
     "     let ref_vimfiles_dirname = '.vimfiles.' . fnamemodify( vimentry, ":t:r" )
@@ -81,7 +116,6 @@ function! s:apply_vimentry_settings()
     " endif
 
     " finally we need to generate shell scripts for :Update command
-    " TODO: call exUtility#CreateIDLangMap ( exUtility#GetProjectFilter("file_filter") )
     " TODO: call exUtility#CreateQuickGenProject ()
 
     " ===================================
@@ -97,55 +131,53 @@ function! s:apply_vimentry_settings()
     " ===================================
 
     " open project window
-    if exists( 'g:ex_enable_project_browser' ) && g:ex_enable_project_browser == "true"
-        if exists( 'g:ex_project_browser' )
-            " NOTE: Any windows open or close during VimEnter will not invoke WinEnter,WinLeave event
-            " this is why I manually call doautocmd here
-            if g:ex_project_browser == "ex"
-                " open ex_project window
-                doautocmd BufLeave
-                doautocmd WinLeave
-                let g:ex_project_file = g:exvim_files_path . "/files.exproject"
-                silent exec 'EXProject ' . g:ex_project_file
+    if vimentry#check('enable_project_browser', 'true')
+        let project_browser = vimentry#get( 'project_browser' )
 
-                " back to edit window
-                doautocmd BufLeave
-                doautocmd WinLeave
-                call ex#window#goto_edit_window()
+        " NOTE: Any windows open or close during VimEnter will not invoke WinEnter,WinLeave event
+        " this is why I manually call doautocmd here
+        if project_browser == 'ex'
+            " open ex_project window
+            doautocmd BufLeave
+            doautocmd WinLeave
+            let g:ex_project_file = g:exvim_folder . "/files.exproject"
+            silent exec 'EXProject ' . g:ex_project_file
 
-            elseif g:ex_project_browser == "nerdtree"
+            " back to edit window
+            doautocmd BufLeave
+            doautocmd WinLeave
+            call ex#window#goto_edit_window()
 
-                " Example: let g:NERDTreeIgnore=['.git$[[dir]]', '.o$[[file]]']
-                let g:NERDTreeIgnore = [] " clear ignore list
-                if exists( 'g:ex_file_ignore_pattern' )
-                    if type(g:ex_file_ignore_pattern) == type([])
-                        for pattern in g:ex_file_ignore_pattern
-                            silent call add ( g:NERDTreeIgnore, pattern.'[[file]]' )
-                        endfor
-                    endif
-                endif
+        elseif project_browser == 'nerdtree'
 
-                if exists( 'g:ex_folder_filter_mode' ) && exists( 'g:ex_folder_filter' )
-                    if g:ex_folder_filter_mode == 'exclude'
-                        if type(g:ex_folder_filter) == type([])
-                            for pattern in g:ex_folder_filter
-                                silent call add ( g:NERDTreeIgnore, pattern.'[[dir]]' )
-                            endfor
-                        endif
-                    endif
-                endif
-
-                " open nerdtree window
-                doautocmd BufLeave
-                doautocmd WinLeave
-                silent exec 'NERDTree'
-
-                " back to edit window
-                doautocmd BufLeave
-                doautocmd WinLeave
-                call ex#window#goto_edit_window()
+            " Example: let g:NERDTreeIgnore=['.git$[[dir]]', '.o$[[file]]']
+            let g:NERDTreeIgnore = [] " clear ignore list
+            let file_ignore_pattern = vimentry#get('file_ignore_pattern')  
+            if type(file_ignore_pattern) == type([])
+                for pattern in file_ignore_pattern
+                    silent call add ( g:NERDTreeIgnore, pattern.'[[file]]' )
+                endfor
             endif
-        end
+
+            if vimentry#check( 'folder_filter_mode',  'exclude' )
+                let folder_filter = vimentry#get('folder_filter')  
+                if folder_filter == type([])
+                    for pattern in folder_filter
+                        silent call add ( g:NERDTreeIgnore, pattern.'[[dir]]' )
+                    endfor
+                endif
+            endif
+
+            " open nerdtree window
+            doautocmd BufLeave
+            doautocmd WinLeave
+            silent exec 'NERDTree'
+
+            " back to edit window
+            doautocmd BufLeave
+            doautocmd WinLeave
+            call ex#window#goto_edit_window()
+        endif
     endif
 endfunction
 " }}}
