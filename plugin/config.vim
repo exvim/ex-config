@@ -105,6 +105,8 @@ endif
 " highlight group {{{
 hi default exTransparent gui=none guifg=background term=none cterm=none ctermfg=darkgray
 hi default exCommentLable term=standout ctermfg=darkyellow ctermbg=Red gui=none guifg=lightgray guibg=red
+hi default exConfirmLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
+hi default exTargetLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
 " }}}
 
 " vimentry#on event registry {{{

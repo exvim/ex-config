@@ -193,12 +193,8 @@ endfunction
 
 " exconfig#gen_sh_update_ctags {{{
 function exconfig#gen_sh_update_ctags(path) 
-    let fullpath = ''
-    let scripts = [] 
-    let ctags_cmd = 'ctags'
-    let ctags_optioins = ''
-
     " get ctags cmd
+    let ctags_cmd = 'ctags'
     if executable('ctags')
         let ctags_cmd = 'ctags'
     elseif executable('exuberant-ctags')
@@ -217,10 +213,12 @@ function exconfig#gen_sh_update_ctags(path)
 
     " get ctags options
     " TODO:
+    let ctags_optioins = ''
 
     " generate scripts
     if has('win16') || has('win32') || has('win64')
         let fullpath = a:path . '/update_tags.bat'
+        let scripts = [] 
     else
         let fullpath = a:path . '/update_tags.sh'
         let scripts = [
@@ -235,8 +233,8 @@ function exconfig#gen_sh_update_ctags(path)
                     \ 'echo "Creating Tags..."'                                      ,
                     \ ''                                                             ,
                     \ '# choose ctags path first'                                    ,
-                    \ 'if [ -f "./${path}/files" ]; then'                            ,
-                    \ '    ctags_parse_files="-L ./files"'                           ,
+                    \ 'if [ -f "${path}/files" ]; then'                              ,
+                    \ '    ctags_parse_files="-L ${path}/files"'                     ,
                     \ 'else'                                                         ,
                     \ '    ctags_parse_files="-R ."'                                 ,
                     \ 'fi'                                                           ,
@@ -260,21 +258,21 @@ endfunction
 
 " exconfig#gen_sh_update_idutils {{{
 function exconfig#gen_sh_update_idutils(path) 
-    let fullpath = ''
-    let scripts = [] 
-    let folder_filter = ''
-
     " check if mkid command executable 
     if !executable('mkid')
         ex#warning("Can't find mkid command in your system. Please install it first!")
     endif
 
     " get folder filter options
-    " TODO:
+    " TODO: 
+    let folder_filter = ''
 
     " generate scripts
     if has('win16') || has('win32') || has('win64')
         let fullpath = a:path . '/update_idutils.bat'
+        " TODO 
+        let scripts = [
+                    \ ]
     else
         let fullpath = a:path . '/update_idutils.sh'
         let scripts = [
@@ -329,14 +327,14 @@ function exconfig#update_exvim_files()
 
     " update tags
     if vimentry#check('enable_tags','true')
-        let cmd = shell . ' '.path.'update_tags.sh' . shell_end
+        let cmd = shell . ' ' . path.'update_tags.sh' . shell_end
         let and = ' && '
     endif
 
     " update IDs
     if vimentry#check('enable_gsearch','true')
         let cmd .= and 
-        let cmd .= shell . ' '.path.'update_idutils.sh' . shell_end
+        let cmd .= shell . ' ' . path.'update_idutils.sh' . shell_end
         let and = ' && '
     endif
 
