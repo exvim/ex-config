@@ -64,7 +64,6 @@ function exconfig#apply()
     if !vimentry#check('project_type', '')
         " TODO:
         " let project_types = split( vimentry#get('project_type'), ',' )
-        " silent call exUtility#SetProjectFilter ( "file_filter", exUtility#GetFileFilterByLanguage (project_types) )
     endif
 
     " set tag file path
@@ -149,8 +148,16 @@ function exconfig#apply()
             " open ex_project window
             doautocmd BufLeave
             doautocmd WinLeave
+
+            silent call exproject#set_file_filters( vimentry#get('file_filter',[]) )
+            silent call exproject#set_file_ignore_patterns( vimentry#get('file_ignore_pattern',[]) )
+            silent call exproject#set_folder_filters( vimentry#get('folder_filter',[]) )
+            silent call exproject#set_folder_filter_mode( vimentry#get('folder_filter_mode','include') )
+
             let g:ex_project_file = g:exvim_folder . "/files.exproject"
             silent exec 'EXProject ' . g:ex_project_file
+
+            " TODO: add dirty message in ex-project window and hint user to press \R for refresh
 
             " back to edit window
             doautocmd BufLeave
