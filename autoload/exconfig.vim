@@ -225,23 +225,54 @@ function exconfig#gen_sh_update_ctags(path)
     " generate scripts
     if ex#os#is('windows')
         let fullpath = a:path . '/update_tags.bat'
-        let scripts = [] 
+        let winpath = ex#path#translate(a:path,'windows')
+        let scripts = [
+                    \ '@echo off'                                               ,
+                    \ 'rem initliaze'                                           ,
+                    \ 'set exvim_path='.winpath                                 ,
+                    \ 'set ctags_cmd='.ctags_cmd                                ,
+                    \ 'set ctags_options='.ctags_optioins                       ,
+                    \ 'set tmp=.\_exvim_tags'                                   ,
+                    \ 'set target=%exvim_path%\tags'                            ,
+                    \ ''                                                        ,
+                    \ 'rem create tags'                                         ,
+                    \ 'echo Creating Tags...'                                   ,
+                    \ ''                                                        ,
+                    \ 'rem choose ctags path first'                             ,
+                    \ 'if exist %exvim_path%\files ('                           ,
+                    \ '    set ctags_parse_files=-L %exvim_path%\files'         ,
+                    \ ') else ('                                                ,
+                    \ '    set ctags_parse_files=-R .'                          ,
+                    \ ')'                                                       ,
+                    \ ''                                                        ,
+                    \ 'rem process tags by langugage'                           ,
+                    \ 'echo   ^|- generate %tmp%'                               ,
+                    \ '%ctags_cmd% -o%tmp% %ctags_options% %ctags_parse_files%' ,
+                    \ ''                                                        ,
+                    \ 'rem replace old file'                                    ,
+                    \ 'if exist %tmp% ('                                        ,
+                    \ '    echo   ^|- move %tmp% to %target%'                   ,
+                    \ '    move /Y %tmp% %target% > nul'                        ,
+                    \ ')'                                                       ,
+                    \ 'echo   ^|- done!'                                        ,
+                    \ '@echo on'                                                ,
+                    \ ] 
     else
         let fullpath = a:path . '/update_tags.sh'
         let scripts = [
                     \ '# initliaze'                                                  ,
-                    \ 'path='.a:path                                                 ,
+                    \ 'exvim_path='.a:path                                           ,
                     \ 'ctags_cmd='.ctags_cmd                                         ,
                     \ 'ctags_options='.ctags_optioins                                ,
                     \ 'tmp="./_exvim_tags"'                                          ,
-                    \ 'target="${path}/tags"'                                        ,
+                    \ 'target="${exvim_path}/tags"'                                  ,
                     \ ''                                                             ,
                     \ '# create tags'                                                ,
                     \ 'echo "Creating Tags..."'                                      ,
                     \ ''                                                             ,
                     \ '# choose ctags path first'                                    ,
-                    \ 'if [ -f "${path}/files" ]; then'                              ,
-                    \ '    ctags_parse_files="-L ${path}/files"'                     ,
+                    \ 'if [ -f "${exvim_path}/files" ]; then'                        ,
+                    \ '    ctags_parse_files="-L ${exvim_path}/files"'               ,
                     \ 'else'                                                         ,
                     \ '    ctags_parse_files="-R ."'                                 ,
                     \ 'fi'                                                           ,
@@ -277,24 +308,52 @@ function exconfig#gen_sh_update_idutils(path)
     " generate scripts
     if ex#os#is('windows')
         let fullpath = a:path . '/update_idutils.bat'
-        " TODO 
+        let winpath = ex#path#translate(a:path,'windows')
+        let wintoolpath = ex#path#translate(g:ex_tools_path,'windows')
         let scripts = [
+                    \ '@echo off'                                                                      ,
+                    \ 'rem initliaze'                                                                  ,
+                    \ 'set exvim_path='.winpath                                                        ,
+                    \ 'set tools_path='.wintoolpath                                                    ,
+                    \ 'set folder_filter='.folder_filter                                               ,
+                    \ 'set tmp=.\_exvim_ID'                                                            ,
+                    \ 'set target=%exvim_path%\ID'                                                     ,
+                    \ ''                                                                               ,
+                    \ 'echo Creating ID...'                                                            ,
+                    \ 'rem try to use auto-gen id language map'                                        ,
+                    \ 'if exist %exvim_path%\id-lang-autogen.map ('                                    ,
+                    \ '    echo   ^|- generate ID by auto-gen language map'                            ,
+                    \ '    set langmap_file=%exvim_path%\id-lang-autogen.map'                          ,
+                    \ ') else ('                                                                       ,
+                    \ 'rem if auto-gen map not exists we use default one in tools directory'           ,
+                    \ '    echo   ^|- generate ID by default language map'                             ,
+                    \ '    set langmap_file=%tools_path%idutils\id-lang.map'                           ,
+                    \ ')'                                                                              ,
+                    \ 'mkid --file=%tmp% --include="text" --lang-map="%langmap_file%" %folder_filter%' ,
+                    \ ''                                                                               ,
+                    \ 'rem replace old file'                                                           ,
+                    \ 'if exist %tmp% ('                                                               ,
+                    \ '    echo   ^|- move %tmp% to %target%'                                          ,
+                    \ '    move /Y %tmp% %target% > nul'                                               ,
+                    \ ')'                                                                              ,
+                    \ 'echo   ^|- done!'                                                               ,
+                    \ '@echo on'                                                                       ,
                     \ ]
     else
         let fullpath = a:path . '/update_idutils.sh'
         let scripts = [
                     \ '# initliaze'                                                                     ,
-                    \ 'path='.a:path                                                                    ,
+                    \ 'exvim_path='.a:path                                                              ,
                     \ 'tools_path='.g:ex_tools_path                                                     ,
                     \ 'folder_filter='.folder_filter                                                    ,
                     \ 'tmp="./_exvim_ID"'                                                               ,
-                    \ 'target="${path}/ID"'                                                             ,
+                    \ 'target="${exvim_path}/ID"'                                                       ,
                     \ ''                                                                                ,
                     \ 'echo "Creating ID..."'                                                           ,
                     \ '# try to use auto-gen id language map'                                           ,
-                    \ 'if [ -f "${path}/id-lang-autogen.map" ]; then'                                   ,
+                    \ 'if [ -f "${exvim_path}/id-lang-autogen.map" ]; then'                             ,
                     \ '    echo "  |- generate ID by auto-gen language map"'                            ,
-                    \ '    langmap_file="${path}/id-lang-autogen.map"'                                  ,
+                    \ '    langmap_file="${exvim_path}/id-lang-autogen.map"'                            ,
                     \ ''                                                                                ,
                     \ '# if auto-gen map not exists we use default one in tools directory'              ,
                     \ 'else'                                                                            ,
@@ -318,35 +377,36 @@ endfunction
 
 " exconfig#update_exvim_files {{{
 function exconfig#update_exvim_files()
-    let shell = ''
-    let shell_end = ''
+    if ex#os#is('windows')
+        let shell_exec = 'call'
+        let shell_and = ' & '
+        let suffix = '.bat'
+        let path = '.\.exvim.'.g:exvim_project_name.'\'
+    else
+        let shell_exec = 'sh'
+        let shell_and = ' && '
+        let suffix = '.sh'
+        let path = './.exvim.'.g:exvim_project_name.'/'
+    endif
+
     let cmd = ''
     let and = ''
-    let path = './.exvim.'.g:exvim_project_name.'/'
-
-    if ex#os#is('windows')
-        let shell = 'cmd /c'
-        let shell_end = ' & pause'
-    else
-        let shell = 'sh'
-        let shell_end = ''
-    endif
 
     " update tags
     if vimentry#check('enable_tags','true')
-        let cmd = shell . ' ' . path.'update_tags.sh' . shell_end
-        let and = ' && '
+        let cmd = shell_exec . ' ' . path.'update_tags'.suffix
+        let and = shell_and
     endif
 
     " update IDs
     if vimentry#check('enable_gsearch','true')
         let cmd .= and 
-        let cmd .= shell . ' ' . path.'update_idutils.sh' . shell_end
-        let and = ' && '
+        let cmd .= shell_exec . ' ' . path.'update_idutils'.suffix
+        let and = shell_and
     endif
 
     exec '!' . cmd
 endfunction
 
 
-" vim:ts=4:sw=4:sts=4 et fdm=marker:
+
