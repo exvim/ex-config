@@ -223,7 +223,7 @@ function exconfig#gen_sh_update_ctags(path)
     let ctags_optioins = ''
 
     " generate scripts
-    if has('win16') || has('win32') || has('win64')
+    if ex#is_windows()
         let fullpath = a:path . '/update_tags.bat'
         let scripts = [] 
     else
@@ -275,7 +275,7 @@ function exconfig#gen_sh_update_idutils(path)
     let folder_filter = ''
 
     " generate scripts
-    if has('win16') || has('win32') || has('win64')
+    if ex#is_windows()
         let fullpath = a:path . '/update_idutils.bat'
         " TODO 
         let scripts = [
@@ -324,7 +324,7 @@ function exconfig#update_exvim_files()
     let and = ''
     let path = './.exvim.'.g:exvim_project_name.'/'
 
-    if has('win16') || has('win32') || has('win64')
+    if ex#is_windows()
         let shell = 'cmd /c'
         let shell_end = ' & pause'
     else

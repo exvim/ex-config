@@ -137,7 +137,7 @@ call ex#register_plugin( '__EMPTY__', { 'bufname': '-MiniBufExplorer-' } )
 " }}}
 
 " commands {{{
-command Update call exconfig#update_exvim_files()
+command! Update call exconfig#update_exvim_files()
 " }}}
 
 " vim:ts=4:sw=4:sts=4 et fdm=marker:
