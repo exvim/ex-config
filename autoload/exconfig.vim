@@ -410,6 +410,7 @@ function exconfig#gen_sh_update_idutils(path)
         let fullpath = a:path . '/update_idutils.bat'
         let winpath = ex#path#translate(a:path,'windows')
         let wintoolpath = ex#path#translate(g:ex_tools_path,'windows')
+        let wintoolpath = expand(wintoolpath)
         let scripts = [
                     \ '@echo off'                                                                      ,
                     \ 'rem initliaze'                                                                  ,
