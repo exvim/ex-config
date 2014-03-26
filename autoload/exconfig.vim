@@ -3,21 +3,21 @@ let s:old_tagrelative=&tagrelative
 let s:old_tags=&tags
 
 " exconfig#apply_project_type {{{
-function exconfig#apply_project_type() 
+function exconfig#apply_project_type()
 endfunction
 
 " exconfig#reset {{{
-function exconfig#reset() 
+function exconfig#reset()
     let &titlestring=s:old_titlestring
     let &tagrelative=s:old_tagrelative
     let &tags=s:old_tags
 endfunction
 
 " exconfig#apply {{{
-function exconfig#apply() 
+function exconfig#apply()
 
     " ===================================
-    " pre-check 
+    " pre-check
     " ===================================
 
     let cwd = vimentry#get('cwd')
@@ -51,7 +51,7 @@ function exconfig#apply()
     endif
 
     " create folder .exvim.xxx/tmp/ if not exists
-    let path = g:exvim_folder.'/tmp' 
+    let path = g:exvim_folder.'/tmp'
     if finddir(path) == ''
         silent call mkdir(path)
     endif
@@ -74,7 +74,7 @@ function exconfig#apply()
             let folder_pattern = ex#pattern#last_words(g:exvim_root_folders)
             let filelist = split(globpath(cwd,'*'),'\n')
             let g:exvim_root_folders = []
-            for name in filelist 
+            for name in filelist
                 if isdirectory(name)
                     let name = fnamemodify(name,':t')
                     if match( name, folder_pattern ) == -1
@@ -85,7 +85,7 @@ function exconfig#apply()
         endif
     else
         let filelist = split(globpath(cwd,'*'),'\n')
-        for name in filelist 
+        for name in filelist
             if isdirectory(name)
                 let name = fnamemodify(name,':t')
                 silent call add ( g:exvim_root_folders, name )
@@ -108,13 +108,13 @@ function exconfig#apply()
     " create .exvim.xxx/hierarchies/
     if vimentry#check('enable_inherits', 'true')
         " TODO:
-        " let inherit_directory_path = g:exES_CWD.'/'.g:exES_vimfiles_dirname.'/.hierarchies' 
+        " let inherit_directory_path = g:exES_CWD.'/'.g:exES_vimfiles_dirname.'/.hierarchies'
         " if finddir(inherit_directory_path) == ''
         "   silent call mkdir(inherit_directory_path)
         " endif
     endif
 
-    " set gsearch 
+    " set gsearch
     if vimentry#check('enable_gsearch', 'true')
         let gsearch_engine = vimentry#get('gsearch_engine')
         if gsearch_engine == 'idutils'
@@ -196,7 +196,7 @@ function exconfig#apply()
 
             " Example: let g:NERDTreeIgnore=['.git$[[dir]]', '.o$[[file]]']
             let g:NERDTreeIgnore = [] " clear ignore list
-            let file_ignore_pattern = vimentry#get('file_ignore_pattern')  
+            let file_ignore_pattern = vimentry#get('file_ignore_pattern')
             if type(file_ignore_pattern) == type([])
                 for pattern in file_ignore_pattern
                     silent call add ( g:NERDTreeIgnore, pattern.'[[file]]' )
@@ -204,7 +204,7 @@ function exconfig#apply()
             endif
 
             if vimentry#check( 'folder_filter_mode',  'exclude' )
-                let folder_filter = vimentry#get('folder_filter')  
+                let folder_filter = vimentry#get('folder_filter')
                 if folder_filter == type([])
                     for pattern in folder_filter
                         silent call add ( g:NERDTreeIgnore, pattern.'[[dir]]' )
@@ -226,22 +226,59 @@ function exconfig#apply()
 endfunction
 
 " exconfig#gen_sh_update_files {{{
-function exconfig#gen_sh_update_files(path) 
+function exconfig#gen_sh_update_files(path)
     " generate scripts
     if ex#os#is('windows')
         let folder_pattern = ""
         for name in g:exvim_root_folders
             let folder_pattern .= '"' . name . '" '
         endfor
+
+        let file_pattern = ''
+        let file_filters = vimentry#get('file_filter', [])
+        if !empty(file_filters)
+            for name in file_filters
+                let file_pattern .= '*.' . toupper(name) . ' '
+            endfor
+        else
+            let file_pattern=''
+        endif
+
         let fullpath = a:path . '/update_filelist.bat'
         let winpath = ex#path#translate(a:path,'windows')
         let scripts = [
-                    \ '@echo off'                                               ,
-                    \ 'rem initliaze'                                           ,
-                    \ ''                                                        ,
-                    \ 'echo   ^|- done!'                                        ,
-                    \ '@echo on'                                                ,
-                    \ ] 
+                    \ '@echo off'                                                                            ,
+                    \ 'rem initliaze'                                                                        ,
+                    \ 'set exvim_path='.winpath                                                              ,
+                    \ 'set file_suffixs='.file_pattern                                                       ,
+                    \ 'set folder_pattern='.folder_pattern                                                   ,
+                    \ 'rem create cwd pattern for sed'                                                       ,
+                    \ 'set cwd_pattern=%cd%'                                                                 ,
+                    \ 'echo %cd%>%exvim_path%\_cwd_'                                                         ,
+                    \ "for /f \"delims=\" %%a in ('type %exvim_path%\\_cwd_^|sed \"s,\\\\,\\\\\\\\,g\"') do ("    ,
+                    \ '    set cwd_pattern=%%a'                                                              ,
+                    \ ')'                                                                                    ,
+                    \ 'set tmp=%exvim_path%\_files'                                                          ,
+                    \ 'set target=%exvim_path%\files'                                                        ,
+                    \ ''                                                                                     ,
+                    \ 'rem Create fileslist'                                                                 ,
+                    \ 'if /I "%folder_pattern%" == "" ('                                                     ,
+                    \ '    dir /s /b %file_suffixs%|sed "s,\(%cwd_pattern%\)\(.*\),.\2,gI" >> "%tmp%"'       ,
+                    \ ') else ('                                                                             ,
+                    \ '    dir /b %file_suffixs%|sed "s,\(.*\),.\\\1,gI" >> "%tmp%"'                         ,
+                    \ '    for %%i in (%folder_pattern%) do ('                                               ,
+                    \ '        cd %%i'                                                                       ,
+                    \ '        dir /s /b %file_suffixs%|sed "s,\(%cwd_pattern%\)\(.*\),.\2,gI" >> "%tmp%"'   ,
+                    \ '        cd ..'                                                                        ,
+                    \ '    )'                                                                                ,
+                    \ ')'                                                                                    ,
+                    \ 'if exist %tmp% ('                                                                     ,
+                    \ '    echo   ^|- move %tmp% to %target%'                                                ,
+                    \ '    move /Y %tmp% %target% > nul'                                                     ,
+                    \ ')'                                                                                    ,
+                    \ 'echo   ^|- done!'                                                                     ,
+                    \ '@echo on'                                                                             ,
+                    \ ]
     else
         let folder_pattern = ''
         for name in g:exvim_root_folders
@@ -250,7 +287,7 @@ function exconfig#gen_sh_update_files(path)
 
         let file_pattern = ''
         let file_filters = vimentry#get('file_filter', [])
-        if !empty(file_filters) 
+        if !empty(file_filters)
             for name in file_filters
                 let file_pattern .= substitute(name, "\+", "\\\\+", "g") . '|'
             endfor
@@ -299,7 +336,7 @@ function exconfig#gen_sh_update_files(path)
 endfunction
 
 " exconfig#gen_sh_update_ctags {{{
-function exconfig#gen_sh_update_ctags(path) 
+function exconfig#gen_sh_update_ctags(path)
     " get ctags cmd
     let ctags_cmd = 'ctags'
     if executable('ctags')
@@ -356,7 +393,7 @@ function exconfig#gen_sh_update_ctags(path)
                     \ ')'                                                       ,
                     \ 'echo   ^|- done!'                                        ,
                     \ '@echo on'                                                ,
-                    \ ] 
+                    \ ]
     else
         let fullpath = a:path . '/update_tags.sh'
         let scripts = [
@@ -395,14 +432,14 @@ function exconfig#gen_sh_update_ctags(path)
 endfunction
 
 " exconfig#gen_sh_update_idutils {{{
-function exconfig#gen_sh_update_idutils(path) 
-    " check if mkid command executable 
+function exconfig#gen_sh_update_idutils(path)
+    " check if mkid command executable
     if !executable('mkid')
         ex#warning("Can't find mkid command in your system. Please install it first!")
     endif
 
     " get folder filter options
-    " TODO: 
+    " TODO:
     let folder_filter = ''
 
     " generate scripts
@@ -504,7 +541,7 @@ function exconfig#update_exvim_files()
 
     " update IDs
     if vimentry#check('enable_gsearch','true')
-        let cmd .= and 
+        let cmd .= and
         let cmd .= shell_exec . ' ' . path.'update_idutils'.suffix
         let and = shell_and
     endif
