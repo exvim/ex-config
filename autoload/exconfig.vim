@@ -66,6 +66,33 @@ function exconfig#apply()
         " let project_types = split( vimentry#get('project_type'), ',' )
     endif
 
+    " set folder filter to g:exvim_root_folders
+    let g:exvim_root_folders = vimentry#get('folder_filter', [])
+    if !empty(g:exvim_root_folders)
+        " we need search the root directory, and add folders that not excluded
+        if vimentry#check('folder_filter_mode', 'exclude')
+            let folder_pattern = ex#pattern#last_words(g:exvim_root_folders)
+            let filelist = split(globpath(cwd,'*'),'\n')
+            let g:exvim_root_folders = []
+            for name in filelist 
+                if isdirectory(name)
+                    let name = fnamemodify(name,':t')
+                    if match( name, folder_pattern ) == -1
+                        silent call add ( g:exvim_root_folders, name )
+                    endif
+                endif
+            endfor
+        endif
+    else
+        let filelist = split(globpath(cwd,'*'),'\n')
+        for name in filelist 
+            if isdirectory(name)
+                let name = fnamemodify(name,':t')
+                silent call add ( g:exvim_root_folders, name )
+            endif
+        endfor
+    endif
+
     " set tag file path
     if vimentry#check('enable_tags', 'true')
         let s:old_tagrelative=&tagrelative
@@ -74,6 +101,7 @@ function exconfig#apply()
         let s:old_tags=&tags
         let &tags=escape(g:exvim_folder."/tags", " ")
 
+        call exconfig#gen_sh_update_files(g:exvim_folder)
         call exconfig#gen_sh_update_ctags(g:exvim_folder)
     endif
 
@@ -196,7 +224,79 @@ function exconfig#apply()
         endif
     endif
 endfunction
-" }}}
+
+" exconfig#gen_sh_update_files {{{
+function exconfig#gen_sh_update_files(path) 
+    " generate scripts
+    if ex#os#is('windows')
+        let folder_pattern = ""
+        for name in g:exvim_root_folders
+            let folder_pattern .= '"' . name . '" '
+        endfor
+        let fullpath = a:path . '/update_filelist.bat'
+        let winpath = ex#path#translate(a:path,'windows')
+        let scripts = [
+                    \ '@echo off'                                               ,
+                    \ 'rem initliaze'                                           ,
+                    \ ''                                                        ,
+                    \ 'echo   ^|- done!'                                        ,
+                    \ '@echo on'                                                ,
+                    \ ] 
+    else
+        let folder_pattern = ''
+        for name in g:exvim_root_folders
+            let folder_pattern .= '"./' . name . '" '
+        endfor
+
+        let file_pattern = ''
+        let file_filters = vimentry#get('file_filter', [])
+        if !empty(file_filters) 
+            for name in file_filters
+                let file_pattern .= substitute(name, "\+", "\\\\+", "g") . '|'
+            endfor
+            let file_pattern = strpart( file_pattern, 0, len(file_pattern) - 1)
+        else
+            let file_pattern='".*"'
+        endif
+
+        let fullpath = a:path . '/update_filelist.sh'
+        let scripts = [
+                    \ '# initliaze'                                                                                                        ,
+                    \ 'exvim_path='.a:path                                                                                                 ,
+                    \ 'folders="'.folder_pattern.'"'                                                                                       ,
+                    \ 'file_suffixs='.file_pattern                                                                                         ,
+                    \ 'tmp=${exvim_path}/_files'                                                                                           ,
+                    \ 'target="${exvim_path}/files"'                                                                                       ,
+                    \ 'find . -maxdepth 1 -regextype posix-extended -regex "test" > /dev/null 2>&1'                                        ,
+                    \ 'if test "$?" = "0"; then'                                                                                           ,
+                    \ '    force_posix_regex_1=""'                                                                                         ,
+                    \ '    force_posix_regex_2="-regextype posix-extended"'                                                                ,
+                    \ 'else'                                                                                                               ,
+                    \ '    force_posix_regex_1="-E"'                                                                                       ,
+                    \ '    force_posix_regex_2=""'                                                                                         ,
+                    \ 'fi'                                                                                                                 ,
+                    \ ''                                                                                                                   ,
+                    \ '# create files'                                                                                                     ,
+                    \ 'echo "Creating Filelist..."'                                                                                        ,
+                    \ 'if test "${folders}" != ""; then'                                                                                   ,
+                    \ '    # NOTE: there still have files under root'                                                                      ,
+                    \ '    find ${force_posix_regex_1} . -maxdepth 1 -not -path "*/\.*" ${force_posix_regex_2} -regex ".*\.("${file_suffixs}")" > "${tmp}"'   ,
+                    \ '    find ${force_posix_regex_1} ${folders} -not -path "*/\.*" ${force_posix_regex_2} -regex ".*\.("${file_suffixs}")" >> "${tmp}"'     ,
+                    \ 'else'                                                                                                               ,
+                    \ '    find ${force_posix_regex_1} . -not -path "*/\.*" ${force_posix_regex_2} -regex ".*\.("${file_suffixs}")" > "${tmp}"'               ,
+                    \ 'fi'                                                                                                                 ,
+                    \ '# replace old file'                                                                                                 ,
+                    \ 'if [ -f "${tmp}" ]; then'                                                                                           ,
+                    \ '    echo "  |- move ${tmp} to ${target}"'                                                                           ,
+                    \ '    mv -f ${tmp} ${target}'                                                                                         ,
+                    \ 'fi'                                                                                                                 ,
+                    \ 'echo "  |- done!"'                                                                                                  ,
+                    \ ]
+    endif
+
+    " save to file
+    call writefile ( scripts, fullpath )
+endfunction
 
 " exconfig#gen_sh_update_ctags {{{
 function exconfig#gen_sh_update_ctags(path) 
@@ -392,10 +492,13 @@ function exconfig#update_exvim_files()
     let cmd = ''
     let and = ''
 
-    " update tags
+    " update filelist & tags
     if vimentry#check('enable_tags','true')
-        let cmd = shell_exec . ' ' . path.'update_tags'.suffix
+        let cmd = shell_exec . ' ' . path.'update_filelist'.suffix
         let and = shell_and
+
+        let cmd .= and
+        let cmd .= shell_exec . ' ' . path.'update_tags'.suffix
     endif
 
     " update IDs
