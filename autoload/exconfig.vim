@@ -435,7 +435,7 @@ endfunction
 function exconfig#gen_sh_update_idutils(path)
     " check if mkid command executable
     if !executable('mkid')
-        ex#warning("Can't find mkid command in your system. Please install it first!")
+        call ex#warning("Can't find mkid command in your system. Please install it first!")
     endif
 
     " get folder filter options
