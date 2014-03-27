@@ -67,7 +67,7 @@ function exconfig#apply()
     endif
 
     " set folder filter to g:exvim_root_folders
-    let g:exvim_root_folders = vimentry#get('folder_filter', [])
+    let g:exvim_root_folders = copy(vimentry#get('folder_filter', []))
     if !empty(g:exvim_root_folders)
         " we need search the root directory, and add folders that not excluded
         if vimentry#check('folder_filter_mode', 'exclude')
