@@ -244,40 +244,32 @@ function exconfig#gen_sh_update_files(path)
             let file_pattern=''
         endif
 
+        let file_pattern_gawk = ''
+        let file_filters = vimentry#get('file_filter', [])
+        if !empty(file_filters)
+            for name in file_filters
+                let file_pattern_gawk .= '\\.' . name . '$|'
+            endfor
+            let file_pattern_gawk = strpart( file_pattern_gawk, 0, len(file_pattern_gawk) - 1)
+        else
+            let file_pattern_gawk=''
+        endif
+
         let fullpath = a:path . '/update-filelist.bat'
         let winpath = ex#path#translate(a:path,'windows')
+        let wintoolpath = ex#path#translate(g:ex_tools_path,'windows')
+        let wintoolpath = expand(wintoolpath)
         let scripts = [
-                    \ '@echo off'                                                                            ,
-                    \ 'rem initliaze'                                                                        ,
-                    \ 'set exvim_path='.winpath                                                              ,
-                    \ 'set file_suffixs='.file_pattern                                                       ,
-                    \ 'set folder_pattern='.folder_pattern                                                   ,
-                    \ 'rem create cwd pattern for sed'                                                       ,
-                    \ 'set cwd_pattern=%cd%'                                                                 ,
-                    \ 'echo %cd%>%exvim_path%\_cwd_'                                                         ,
-                    \ "for /f \"delims=\" %%a in ('type %exvim_path%\\_cwd_^|sed \"s,\\\\,\\\\\\\\,g\"') do ("    ,
-                    \ '    set cwd_pattern=%%a'                                                              ,
-                    \ ')'                                                                                    ,
-                    \ 'set tmp=%exvim_path%\_files'                                                          ,
-                    \ 'set target=%exvim_path%\files'                                                        ,
-                    \ ''                                                                                     ,
-                    \ 'rem Create fileslist'                                                                 ,
-                    \ 'if /I "%folder_pattern%" == "" ('                                                     ,
-                    \ '    dir /s /b %file_suffixs%|sed "s,\(%cwd_pattern%\)\(.*\),.\2,gI" >> "%tmp%"'       ,
-                    \ ') else ('                                                                             ,
-                    \ '    dir /b %file_suffixs%|sed "s,\(.*\),.\\\1,gI" >> "%tmp%"'                         ,
-                    \ '    for %%i in (%folder_pattern%) do ('                                               ,
-                    \ '        cd %%i'                                                                       ,
-                    \ '        dir /s /b %file_suffixs%|sed "s,\(%cwd_pattern%\)\(.*\),.\2,gI" >> "%tmp%"'   ,
-                    \ '        cd ..'                                                                        ,
-                    \ '    )'                                                                                ,
-                    \ ')'                                                                                    ,
-                    \ 'if exist %tmp% ('                                                                     ,
-                    \ '    echo   ^|- move %tmp% to %target%'                                                ,
-                    \ '    move /Y %tmp% %target% > nul'                                                     ,
-                    \ ')'                                                                                    ,
-                    \ 'echo   ^|- done!'                                                                     ,
-                    \ '@echo on'                                                                             ,
+                    \ '@echo off'                                    ,
+                    \ 'set DEST='.winpath                            ,
+                    \ 'set TOOLS='.wintoolpath                       ,
+                    \ 'set FOLDERS='.folder_pattern                  ,
+                    \ 'set FILE_SUFFIXS='.file_pattern               ,
+                    \ 'set FILE_FILTER_PATTERN='.file_pattern_gawk   ,
+                    \ 'set TMP=%DEST%\_files_gawk'                   ,
+                    \ 'set TMP2=%DEST%\_files'                       ,
+                    \ 'set TARGET=%DEST%\files'                      ,
+                    \ 'call %TOOLS%\shell\batch\update-filelist.bat' ,
                     \ ]
     else
         let folder_pattern = ''
@@ -302,7 +294,7 @@ function exconfig#gen_sh_update_files(path)
                     \ 'export TOOLS="'.g:ex_tools_path.'"'        ,
                     \ 'export FOLDERS="'.folder_pattern.'"'       ,
                     \ 'export FILE_SUFFIXS="'.file_pattern.'"'    ,
-                    \ 'export TMP="${DEST}/_files"'                 ,
+                    \ 'export TMP="${DEST}/_files"'               ,
                     \ 'export TARGET="${DEST}/files"'             ,
                     \ 'sh ${TOOLS}/shell/bash/update-filelist.sh' ,
                     \ ]
@@ -340,36 +332,17 @@ function exconfig#gen_sh_update_ctags(path)
     if ex#os#is('windows')
         let fullpath = a:path . '/update-tags.bat'
         let winpath = ex#path#translate(a:path,'windows')
+        let wintoolpath = ex#path#translate(g:ex_tools_path,'windows')
+        let wintoolpath = expand(wintoolpath)
         let scripts = [
-                    \ '@echo off'                                               ,
-                    \ 'rem initliaze'                                           ,
-                    \ 'set exvim_path='.winpath                                 ,
-                    \ 'set ctags_cmd='.ctags_cmd                                ,
-                    \ 'set ctags_options='.ctags_optioins                       ,
-                    \ 'set tmp=.\_exvim_tags'                                   ,
-                    \ 'set target=%exvim_path%\tags'                            ,
-                    \ ''                                                        ,
-                    \ 'rem create tags'                                         ,
-                    \ 'echo Creating Tags...'                                   ,
-                    \ ''                                                        ,
-                    \ 'rem choose ctags path first'                             ,
-                    \ 'if exist %exvim_path%\files ('                           ,
-                    \ '    set ctags_parse_files=-L %exvim_path%\files'         ,
-                    \ ') else ('                                                ,
-                    \ '    set ctags_parse_files=-R .'                          ,
-                    \ ')'                                                       ,
-                    \ ''                                                        ,
-                    \ 'rem process tags by langugage'                           ,
-                    \ 'echo   ^|- generate %tmp%'                               ,
-                    \ '%ctags_cmd% -o%tmp% %ctags_options% %ctags_parse_files%' ,
-                    \ ''                                                        ,
-                    \ 'rem replace old file'                                    ,
-                    \ 'if exist %tmp% ('                                        ,
-                    \ '    echo   ^|- move %tmp% to %target%'                   ,
-                    \ '    move /Y %tmp% %target% > nul'                        ,
-                    \ ')'                                                       ,
-                    \ 'echo   ^|- done!'                                        ,
-                    \ '@echo on'                                                ,
+                    \ '@echo off'                                ,
+                    \ 'set DEST='.winpath                        ,
+                    \ 'set TOOLS='.wintoolpath                   ,
+                    \ 'set CTAGS_CMD='.ctags_cmd                 ,
+                    \ 'set OPTIONS='.ctags_optioins              ,
+                    \ 'set TMP=.\_exvim_tags'                    ,
+                    \ 'set TARGET=%DEST%\tags'                   ,
+                    \ 'call %TOOLS%\shell\batch\update-tags.bat' ,
                     \ ]
     else
         let fullpath = a:path . '/update-tags.sh'
@@ -406,33 +379,13 @@ function exconfig#gen_sh_update_idutils(path)
         let wintoolpath = ex#path#translate(g:ex_tools_path,'windows')
         let wintoolpath = expand(wintoolpath)
         let scripts = [
-                    \ '@echo off'                                                                      ,
-                    \ 'rem initliaze'                                                                  ,
-                    \ 'set exvim_path='.winpath                                                        ,
-                    \ 'set tools_path='.wintoolpath                                                    ,
-                    \ 'set folder_filter='.folder_filter                                               ,
-                    \ 'set tmp=.\_exvim_ID'                                                            ,
-                    \ 'set target=%exvim_path%\ID'                                                     ,
-                    \ ''                                                                               ,
-                    \ 'echo Creating ID...'                                                            ,
-                    \ 'rem try to use auto-gen id language map'                                        ,
-                    \ 'if exist %exvim_path%\id-lang-autogen.map ('                                    ,
-                    \ '    echo   ^|- generate ID by auto-gen language map'                            ,
-                    \ '    set langmap_file=%exvim_path%\id-lang-autogen.map'                          ,
-                    \ ') else ('                                                                       ,
-                    \ 'rem if auto-gen map not exists we use default one in tools directory'           ,
-                    \ '    echo   ^|- generate ID by default language map'                             ,
-                    \ '    set langmap_file=%tools_path%idutils\id-lang.map'                           ,
-                    \ ')'                                                                              ,
-                    \ 'mkid --file=%tmp% --include="text" --lang-map="%langmap_file%" %folder_filter%' ,
-                    \ ''                                                                               ,
-                    \ 'rem replace old file'                                                           ,
-                    \ 'if exist %tmp% ('                                                               ,
-                    \ '    echo   ^|- move %tmp% to %target%'                                          ,
-                    \ '    move /Y %tmp% %target% > nul'                                               ,
-                    \ ')'                                                                              ,
-                    \ 'echo   ^|- done!'                                                               ,
-                    \ '@echo on'                                                                       ,
+                    \ '@echo off'                                   ,
+                    \ 'set DEST='.winpath                           ,
+                    \ 'set TOOLS='.wintoolpath                      ,
+                    \ 'set FOLDER_FILTER='.folder_filter            ,
+                    \ 'set TMP=.\_exvim_ID'                         ,
+                    \ 'set TARGET=%DEST%\ID'                        ,
+                    \ 'call %TOOLS%\shell\batch\update-idutils.bat' ,
                     \ ]
     else
         let fullpath = a:path . '/update-idutils.sh'
@@ -455,11 +408,13 @@ function exconfig#update_exvim_files()
     if ex#os#is('windows')
         let shell_exec = 'call'
         let shell_and = ' & '
+        let shell_pause = ' && pause'
         let suffix = '.bat'
         let path = '.\.exvim.'.g:exvim_project_name.'\'
     else
         let shell_exec = 'sh'
         let shell_and = ' && '
+        let shell_pause = ''
         let suffix = '.sh'
         let path = './.exvim.'.g:exvim_project_name.'/'
     endif
@@ -483,7 +438,10 @@ function exconfig#update_exvim_files()
         let and = shell_and
     endif
 
-    exec '!' . cmd
+    let cmd .= shell_pause
+    call ex#hint('exVim Updating...')
+    silent exec '!' . cmd
+    call ex#hint('exVim Update Finish!')
 endfunction
 
 
