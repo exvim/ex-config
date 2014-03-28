@@ -244,7 +244,7 @@ function exconfig#gen_sh_update_files(path)
             let file_pattern=''
         endif
 
-        let fullpath = a:path . '/update_filelist.bat'
+        let fullpath = a:path . '/update-filelist.bat'
         let winpath = ex#path#translate(a:path,'windows')
         let scripts = [
                     \ '@echo off'                                                                            ,
@@ -293,41 +293,18 @@ function exconfig#gen_sh_update_files(path)
             endfor
             let file_pattern = strpart( file_pattern, 0, len(file_pattern) - 1)
         else
-            let file_pattern='".*"'
+            let file_pattern='.*'
         endif
 
-        let fullpath = a:path . '/update_filelist.sh'
+        let fullpath = a:path . '/update-filelist.sh'
         let scripts = [
-                    \ '# initliaze'                                                                                                        ,
-                    \ 'exvim_path='.a:path                                                                                                 ,
-                    \ 'folders="'.folder_pattern.'"'                                                                                       ,
-                    \ 'file_suffixs='.file_pattern                                                                                         ,
-                    \ 'tmp=${exvim_path}/_files'                                                                                           ,
-                    \ 'target="${exvim_path}/files"'                                                                                       ,
-                    \ 'find . -maxdepth 1 -regextype posix-extended -regex "test" > /dev/null 2>&1'                                        ,
-                    \ 'if test "$?" = "0"; then'                                                                                           ,
-                    \ '    force_posix_regex_1=""'                                                                                         ,
-                    \ '    force_posix_regex_2="-regextype posix-extended"'                                                                ,
-                    \ 'else'                                                                                                               ,
-                    \ '    force_posix_regex_1="-E"'                                                                                       ,
-                    \ '    force_posix_regex_2=""'                                                                                         ,
-                    \ 'fi'                                                                                                                 ,
-                    \ ''                                                                                                                   ,
-                    \ '# create files'                                                                                                     ,
-                    \ 'echo "Creating Filelist..."'                                                                                        ,
-                    \ 'if test "${folders}" != ""; then'                                                                                   ,
-                    \ '    # NOTE: there still have files under root'                                                                      ,
-                    \ '    find ${force_posix_regex_1} . -maxdepth 1 -not -path "*/\.*" ${force_posix_regex_2} -regex ".*\.("${file_suffixs}")" > "${tmp}"'   ,
-                    \ '    find ${force_posix_regex_1} ${folders} -not -path "*/\.*" ${force_posix_regex_2} -regex ".*\.("${file_suffixs}")" >> "${tmp}"'     ,
-                    \ 'else'                                                                                                               ,
-                    \ '    find ${force_posix_regex_1} . -not -path "*/\.*" ${force_posix_regex_2} -regex ".*\.("${file_suffixs}")" > "${tmp}"'               ,
-                    \ 'fi'                                                                                                                 ,
-                    \ '# replace old file'                                                                                                 ,
-                    \ 'if [ -f "${tmp}" ]; then'                                                                                           ,
-                    \ '    echo "  |- move ${tmp} to ${target}"'                                                                           ,
-                    \ '    mv -f ${tmp} ${target}'                                                                                         ,
-                    \ 'fi'                                                                                                                 ,
-                    \ 'echo "  |- done!"'                                                                                                  ,
+                    \ 'export DEST='.a:path                       ,
+                    \ 'export TOOLS="'.g:ex_tools_path.'"'        ,
+                    \ 'export FOLDERS="'.folder_pattern.'"'       ,
+                    \ 'export FILE_SUFFIXS="'.file_pattern.'"'    ,
+                    \ 'export TMP="${DEST}/_files"'                 ,
+                    \ 'export TARGET="${DEST}/files"'             ,
+                    \ 'sh ${TOOLS}/shell/bash/update-filelist.sh' ,
                     \ ]
     endif
 
@@ -352,7 +329,7 @@ function exconfig#gen_sh_update_ctags(path)
     elseif executable('tags')
         let ctags_cmd = 'tags'
     else
-        ex#warning("Can't find ctags command in your system. Please install it first!")
+        call ex#warning("Can't find ctags command in your system. Please install it first!")
     endif
 
     " get ctags options
@@ -361,7 +338,7 @@ function exconfig#gen_sh_update_ctags(path)
 
     " generate scripts
     if ex#os#is('windows')
-        let fullpath = a:path . '/update_tags.bat'
+        let fullpath = a:path . '/update-tags.bat'
         let winpath = ex#path#translate(a:path,'windows')
         let scripts = [
                     \ '@echo off'                                               ,
@@ -395,35 +372,15 @@ function exconfig#gen_sh_update_ctags(path)
                     \ '@echo on'                                                ,
                     \ ]
     else
-        let fullpath = a:path . '/update_tags.sh'
+        let fullpath = a:path . '/update-tags.sh'
         let scripts = [
-                    \ '# initliaze'                                                  ,
-                    \ 'exvim_path='.a:path                                           ,
-                    \ 'ctags_cmd='.ctags_cmd                                         ,
-                    \ 'ctags_options='.ctags_optioins                                ,
-                    \ 'tmp="./_exvim_tags"'                                          ,
-                    \ 'target="${exvim_path}/tags"'                                  ,
-                    \ ''                                                             ,
-                    \ '# create tags'                                                ,
-                    \ 'echo "Creating Tags..."'                                      ,
-                    \ ''                                                             ,
-                    \ '# choose ctags path first'                                    ,
-                    \ 'if [ -f "${exvim_path}/files" ]; then'                        ,
-                    \ '    ctags_parse_files="-L ${exvim_path}/files"'               ,
-                    \ 'else'                                                         ,
-                    \ '    ctags_parse_files="-R ."'                                 ,
-                    \ 'fi'                                                           ,
-                    \ ''                                                             ,
-                    \ '# process tags by langugage'                                  ,
-                    \ 'echo "  |- generate ${tmp}"'                                  ,
-                    \ '${ctags_cmd} -o ${tmp} ${ctags_options} ${ctags_parse_files}' ,
-                    \ ''                                                             ,
-                    \ '# replace old file'                                           ,
-                    \ 'if [ -f "${tmp}" ]; then'                                     ,
-                    \ '    echo "  |- move ${tmp} to ${target}"'                     ,
-                    \ '    mv -f ${tmp} ${target}'                                   ,
-                    \ 'fi'                                                           ,
-                    \ 'echo "  |- done!"'                                            ,
+                    \ 'export DEST="'.a:path.'"'              ,
+                    \ 'export TOOLS="'.g:ex_tools_path.'"'    ,
+                    \ 'export CTAGS_CMD="'.ctags_cmd.'"'      ,
+                    \ 'export OPTIONS="'.ctags_optioins.'"'   ,
+                    \ 'export TMP="./_exvim_tags"'            ,
+                    \ 'export TARGET="${DEST}/tags"'          ,
+                    \ 'sh ${TOOLS}/shell/bash/update-tags.sh' ,
                     \ ]
     endif
 
@@ -444,7 +401,7 @@ function exconfig#gen_sh_update_idutils(path)
 
     " generate scripts
     if ex#os#is('windows')
-        let fullpath = a:path . '/update_idutils.bat'
+        let fullpath = a:path . '/update-idutils.bat'
         let winpath = ex#path#translate(a:path,'windows')
         let wintoolpath = ex#path#translate(g:ex_tools_path,'windows')
         let wintoolpath = expand(wintoolpath)
@@ -478,34 +435,14 @@ function exconfig#gen_sh_update_idutils(path)
                     \ '@echo on'                                                                       ,
                     \ ]
     else
-        let fullpath = a:path . '/update_idutils.sh'
+        let fullpath = a:path . '/update-idutils.sh'
         let scripts = [
-                    \ '# initliaze'                                                                     ,
-                    \ 'exvim_path='.a:path                                                              ,
-                    \ 'tools_path='.g:ex_tools_path                                                     ,
-                    \ 'folder_filter='.folder_filter                                                    ,
-                    \ 'tmp="./_exvim_ID"'                                                               ,
-                    \ 'target="${exvim_path}/ID"'                                                       ,
-                    \ ''                                                                                ,
-                    \ 'echo "Creating ID..."'                                                           ,
-                    \ '# try to use auto-gen id language map'                                           ,
-                    \ 'if [ -f "${exvim_path}/id-lang-autogen.map" ]; then'                             ,
-                    \ '    echo "  |- generate ID by auto-gen language map"'                            ,
-                    \ '    langmap_file="${exvim_path}/id-lang-autogen.map"'                            ,
-                    \ ''                                                                                ,
-                    \ '# if auto-gen map not exists we use default one in tools directory'              ,
-                    \ 'else'                                                                            ,
-                    \ '    echo "  |- generate ID by default language map"'                             ,
-                    \ '    langmap_file="${tools_path}/idutils/id-lang.map"'                            ,
-                    \ 'fi'                                                                              ,
-                    \ 'mkid --file=${tmp} --include="text" --lang-map=${langmap_file} ${folder_filter}' ,
-                    \ ''                                                                                ,
-                    \ '# replace old file'                                                              ,
-                    \ 'if [ -f "${tmp}" ]; then'                                                        ,
-                    \ '    echo "  |- move ${tmp} to ${target}"'                                        ,
-                    \ '    mv -f ${tmp} ${target}'                                                      ,
-                    \ 'fi'                                                                              ,
-                    \ 'echo "  |- done!"'                                                               ,
+                    \ 'export DEST="'.a:path.'"'                 ,
+                    \ 'export TOOLS="'.g:ex_tools_path.'"'       ,
+                    \ 'export FOLDER_FILTER="'.folder_filter.'"' ,
+                    \ 'export TMP="./_exvim_ID"'                 ,
+                    \ 'export TARGET="${DEST}/ID"'               ,
+                    \ 'sh ${TOOLS}/shell/bash/update-idutils.sh' ,
                     \ ]
     endif
 
@@ -532,17 +469,17 @@ function exconfig#update_exvim_files()
 
     " update filelist & tags
     if vimentry#check('enable_tags','true')
-        let cmd = shell_exec . ' ' . path.'update_filelist'.suffix
+        let cmd = shell_exec . ' ' . path.'update-filelist'.suffix
         let and = shell_and
 
         let cmd .= and
-        let cmd .= shell_exec . ' ' . path.'update_tags'.suffix
+        let cmd .= shell_exec . ' ' . path.'update-tags'.suffix
     endif
 
     " update IDs
     if vimentry#check('enable_gsearch','true')
         let cmd .= and
-        let cmd .= shell_exec . ' ' . path.'update_idutils'.suffix
+        let cmd .= shell_exec . ' ' . path.'update-idutils'.suffix
         let and = shell_and
     endif
 
