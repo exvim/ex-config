@@ -103,15 +103,20 @@ function exconfig#apply()
 
         call exconfig#gen_sh_update_files(g:exvim_folder)
         call exconfig#gen_sh_update_ctags(g:exvim_folder)
-    endif
 
-    " create .exvim.xxx/hierarchies/
-    if vimentry#check('enable_inherits', 'true')
-        " TODO:
-        " let inherit_directory_path = g:exES_CWD.'/'.g:exES_vimfiles_dirname.'/.hierarchies'
-        " if finddir(inherit_directory_path) == ''
-        "   silent call mkdir(inherit_directory_path)
-        " endif
+        " symbols
+        if vimentry#check('enable_symbols', 'true')
+            call exconfig#gen_sh_update_symbols(g:exvim_folder)
+        endif
+
+        " create .exvim.xxx/hierarchies/
+        if vimentry#check('enable_inherits', 'true')
+            " TODO:
+            " let inherit_directory_path = g:exES_CWD.'/'.g:exES_vimfiles_dirname.'/.hierarchies'
+            " if finddir(inherit_directory_path) == ''
+            "   silent call mkdir(inherit_directory_path)
+            " endif
+        endif
     endif
 
     " set gsearch
@@ -229,6 +234,11 @@ endfunction
 function exconfig#gen_sh_update_files(path)
     " generate scripts
     if ex#os#is('windows')
+        " check if gawk command executable
+        if !executable('gawk')
+            call ex#warning("Can't find gawk command in your system. Please install it first!")
+        endif
+
         let folder_pattern = ""
         for name in g:exvim_root_folders
             let folder_pattern .= '"' . name . '" '
@@ -361,6 +371,42 @@ function exconfig#gen_sh_update_ctags(path)
     call writefile ( scripts, fullpath )
 endfunction
 
+" exconfig#gen_sh_update_symbols {{{
+function exconfig#gen_sh_update_symbols(path)
+    " check if gawk command executable
+    if !executable('gawk')
+        call ex#warning("Can't find gawk command in your system. Please install it first!")
+    endif
+
+    " generate scripts
+    if ex#os#is('windows')
+        let fullpath = a:path . '/update-symbols.bat'
+        let winpath = ex#path#translate(a:path,'windows')
+        let wintoolpath = ex#path#translate(g:ex_tools_path,'windows')
+        let wintoolpath = expand(wintoolpath)
+        let scripts = [
+                    \ '@echo off'                                   ,
+                    \ 'set DEST='.winpath                           ,
+                    \ 'set TOOLS='.wintoolpath                      ,
+                    \ 'set TMP=.\_symbols.exsymbol'                 ,
+                    \ 'set TARGET=%DEST%\symbols.exsymbol'          ,
+                    \ 'call %TOOLS%\shell\batch\update-symbols.bat' ,
+                    \ ]
+    else
+        let fullpath = a:path . '/update-symbols.sh'
+        let scripts = [
+                    \ 'export DEST="'.a:path.'"'                   ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                    \ 'export TMP="./_symbols.exsymbol"'           ,
+                    \ 'export TARGET="${DEST}/symbols.exsymbol"'   ,
+                    \ 'sh ${TOOLS}/shell/bash/update-symbols.sh'   ,
+                    \ ]
+    endif
+
+    " save to file
+    call writefile ( scripts, fullpath )
+endfunction
+
 " exconfig#gen_sh_update_idutils {{{
 function exconfig#gen_sh_update_idutils(path)
     " check if mkid command executable
@@ -424,13 +470,16 @@ function exconfig#update_exvim_files()
     let cmd = ''
     let and = ''
 
-    " update filelist & tags
+    " update filelist, tags, symbols
     if vimentry#check('enable_tags','true')
         let cmd = shell_exec . ' ' . path.'update-filelist'.suffix
         let and = shell_and
 
         let cmd .= and
         let cmd .= shell_exec . ' ' . path.'update-tags'.suffix
+
+        let cmd .= and
+        let cmd .= shell_exec . ' ' . path.'update-symbols'.suffix
     endif
 
     " update IDs
