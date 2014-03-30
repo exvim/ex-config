@@ -388,8 +388,8 @@ function exconfig#gen_sh_update_symbols(path)
                     \ '@echo off'                                   ,
                     \ 'set DEST='.winpath                           ,
                     \ 'set TOOLS='.wintoolpath                      ,
-                    \ 'set TMP=.\_symbols.exsymbol'                 ,
-                    \ 'set TARGET=%DEST%\symbols.exsymbol'          ,
+                    \ 'set TMP=.\_symbols'                          ,
+                    \ 'set TARGET=%DEST%\symbols'                   ,
                     \ 'call %TOOLS%\shell\batch\update-symbols.bat' ,
                     \ ]
     else
@@ -397,8 +397,8 @@ function exconfig#gen_sh_update_symbols(path)
         let scripts = [
                     \ 'export DEST="'.a:path.'"'                   ,
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
-                    \ 'export TMP="./_symbols.exsymbol"'           ,
-                    \ 'export TARGET="${DEST}/symbols.exsymbol"'   ,
+                    \ 'export TMP="./_symbols"'                    ,
+                    \ 'export TARGET="${DEST}/symbols"'            ,
                     \ 'sh ${TOOLS}/shell/bash/update-symbols.sh'   ,
                     \ ]
     endif
