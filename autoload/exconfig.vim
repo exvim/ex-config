@@ -290,13 +290,13 @@ function exconfig#gen_sh_update_files(path)
 
         let fullpath = a:path . '/update-filelist.sh'
         let scripts = [
-                    \ 'export DEST='.a:path                       ,
-                    \ 'export TOOLS="'.g:ex_tools_path.'"'        ,
-                    \ 'export FOLDERS="'.folder_pattern.'"'       ,
-                    \ 'export FILE_SUFFIXS="'.file_pattern.'"'    ,
-                    \ 'export TMP="${DEST}/_files"'               ,
-                    \ 'export TARGET="${DEST}/files"'             ,
-                    \ 'sh ${TOOLS}/shell/bash/update-filelist.sh' ,
+                    \ 'export DEST='.a:path                        ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                    \ 'export FOLDERS="'.folder_pattern.'"'        ,
+                    \ 'export FILE_SUFFIXS="'.file_pattern.'"'     ,
+                    \ 'export TMP="${DEST}/_files"'                ,
+                    \ 'export TARGET="${DEST}/files"'              ,
+                    \ 'sh ${TOOLS}/shell/bash/update-filelist.sh'  ,
                     \ ]
     endif
 
@@ -347,13 +347,13 @@ function exconfig#gen_sh_update_ctags(path)
     else
         let fullpath = a:path . '/update-tags.sh'
         let scripts = [
-                    \ 'export DEST="'.a:path.'"'              ,
-                    \ 'export TOOLS="'.g:ex_tools_path.'"'    ,
-                    \ 'export CTAGS_CMD="'.ctags_cmd.'"'      ,
-                    \ 'export OPTIONS="'.ctags_optioins.'"'   ,
-                    \ 'export TMP="./_exvim_tags"'            ,
-                    \ 'export TARGET="${DEST}/tags"'          ,
-                    \ 'sh ${TOOLS}/shell/bash/update-tags.sh' ,
+                    \ 'export DEST="'.a:path.'"'                   ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                    \ 'export CTAGS_CMD="'.ctags_cmd.'"'           ,
+                    \ 'export OPTIONS="'.ctags_optioins.'"'        ,
+                    \ 'export TMP="./_exvim_tags"'                 ,
+                    \ 'export TARGET="${DEST}/tags"'               ,
+                    \ 'sh ${TOOLS}/shell/bash/update-tags.sh'      ,
                     \ ]
     endif
 
@@ -390,12 +390,12 @@ function exconfig#gen_sh_update_idutils(path)
     else
         let fullpath = a:path . '/update-idutils.sh'
         let scripts = [
-                    \ 'export DEST="'.a:path.'"'                 ,
-                    \ 'export TOOLS="'.g:ex_tools_path.'"'       ,
-                    \ 'export FOLDER_FILTER="'.folder_filter.'"' ,
-                    \ 'export TMP="./_exvim_ID"'                 ,
-                    \ 'export TARGET="${DEST}/ID"'               ,
-                    \ 'sh ${TOOLS}/shell/bash/update-idutils.sh' ,
+                    \ 'export DEST="'.a:path.'"'                   ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                    \ 'export FOLDER_FILTER="'.folder_filter.'"'   ,
+                    \ 'export TMP="./_exvim_ID"'                   ,
+                    \ 'export TARGET="${DEST}/ID"'                 ,
+                    \ 'sh ${TOOLS}/shell/bash/update-idutils.sh'   ,
                     \ ]
     endif
 
