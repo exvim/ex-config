@@ -33,6 +33,16 @@ function exconfig#apply()
         return
     endif
 
+    if finddir(cwd) == ''
+        let newcwd = fnamemodify( bufname('.'), ':p:h' )
+        if search('cwd =', 'c') > 0
+            silent call setline('.','cwd = ' . newcwd . " -- <= WARNING: Changed by exVim! Can't find the old path: " . cwd)
+        endif
+        call ex#warning("Can't find the path of cwd you provide! Reset it with current path. Use :w to save the changes!")
+        let cwd = newcwd
+        return
+    endif
+
     let g:exvim_project_name = project_name
     let g:exvim_project_root = cwd
     let g:exvim_folder = cwd.'/.exvim.'.project_name
