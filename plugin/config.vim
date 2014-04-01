@@ -121,8 +121,8 @@ call ex#register_plugin( 'help', { 'buftype': 'help' } )
 call ex#register_plugin( 'qf', { 'buftype': 'quickfix' } )
 " register ex-plugins
 call ex#register_plugin( 'exproject', {} )
-call ex#register_plugin( 'exgsearch', {} )
-call ex#register_plugin( 'exsymbol', {} )
+call ex#register_plugin( 'exgsearch', { 'autoclose': 'true' } )
+call ex#register_plugin( 'exsymbol', { 'autoclose': 'true' } )
 " register 3rd-plugins
 call ex#register_plugin( 'minibufexpl', { 'bufname': '-MiniBufExplorer-', 'buftype': 'nofile' } )
 call ex#register_plugin( 'taglist', { 'bufname': '__Tag_List__', 'buftype': 'nofile' } )
