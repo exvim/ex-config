@@ -1,3 +1,13 @@
+exec 'AirlineTheme kolor'
+
+" ex
+" =============================
+
+hi clear exTransparent
+hi default exTransparent gui=none guifg=background term=none cterm=none ctermfg=darkgray
+
+hi clear exCommentLable
+hi link exCommentLable ErrorMsg
 
 " For marks a-z
 hi clear ShowMarksHLl

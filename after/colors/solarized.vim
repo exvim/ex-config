@@ -1,4 +1,10 @@
 if &background == "dark"
+    " ex
+    " =============================
+
+    hi clear exTransparent
+    hi default exTransparent gui=none guifg=background term=none cterm=none ctermfg=darkgray
+
     " NOTE: keep visual mode words still using its own syntax color  
     hi Visual gui=NONE guifg=NONE guibg=#004b56
     hi clear exCommentLable
@@ -32,12 +38,13 @@ if &background == "dark"
 
     hi clear EX_HL_label4
     hi default EX_HL_label4 gui=none guibg=lightgreen term=none cterm=none ctermbg=darkgreen
-
+else
     " ex
     " =============================
+
     hi clear exTransparent
     hi default exTransparent gui=none guifg=background term=none cterm=none ctermfg=darkgray
-else
+
     " NOTE: keep visual mode words still using its own syntax color  
     " hi Visual gui=NONE guifg=NONE guibg=#93a1a1
     hi clear exCommentLable
@@ -71,11 +78,6 @@ else
 
     hi clear EX_HL_label4
     hi default EX_HL_label4 gui=none guibg=lightgreen term=none cterm=none ctermbg=lightgreen
-
-    " ex
-    " =============================
-    hi clear exTransparent
-    hi default exTransparent gui=none guifg=background term=none cterm=none ctermfg=darkgray
 endif
 
 " vim:ts=4:sw=4:sts=4 et fdm=marker:
