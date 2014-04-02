@@ -76,19 +76,38 @@ function exconfig#apply()
         " let project_types = split( vimentry#get('project_type'), ',' )
     endif
 
-    " set folder filter to g:exvim_root_folders
-    let g:exvim_root_folders = copy(vimentry#get('folder_filter', []))
-    if !empty(g:exvim_root_folders)
+    " set folder filter to g:exvim_root_folders and g:exvim_root_exclude_folders
+    let folder_filter = copy(vimentry#get('folder_filter', []))
+    let g:exvim_root_folders = []
+    let g:exvim_root_exclude_folders = []
+
+    if !empty(folder_filter)
         " we need search the root directory, and add folders that not excluded
         if vimentry#check('folder_filter_mode', 'exclude')
-            let folder_pattern = ex#pattern#last_words(g:exvim_root_folders)
+            " set include folders
             let filelist = split(globpath(cwd,'*'),'\n')
-            let g:exvim_root_folders = []
             for name in filelist
                 if isdirectory(name)
                     let name = fnamemodify(name,':t')
-                    if match( name, folder_pattern ) == -1
+                    if index( folder_filter, name ) == -1
                         silent call add ( g:exvim_root_folders, name )
+                    endif
+                endif
+            endfor
+
+            " set exclude folders
+            let g:exvim_root_exclude_folders = copy(folder_filter)
+        else
+            " set include folders
+            let g:exvim_root_folders = copy(folder_filter)
+
+            " set exclude folders
+            let filelist = split(globpath(cwd,'*'),'\n')
+            for name in filelist
+                if isdirectory(name)
+                    let name = fnamemodify(name,':t')
+                    if index( folder_filter, name ) == -1
+                        silent call add ( g:exvim_root_exclude_folders, name )
                     endif
                 endif
             endfor
@@ -424,9 +443,11 @@ function exconfig#gen_sh_update_idutils(path)
         call ex#warning("Can't find mkid command in your system. Please install it first!")
     endif
 
-    " get folder filter options
-    " TODO:
+    " get exclude folder filter options
     let folder_filter = ''
+    for name in g:exvim_root_exclude_folders
+        let folder_filter .= '-p"' . name . '" '
+    endfor
 
     " generate scripts
     if ex#os#is('windows')
