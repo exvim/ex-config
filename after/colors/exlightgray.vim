@@ -9,6 +9,12 @@ hi exTransparent gui=none guifg=background term=none cterm=none ctermfg=darkgray
 hi clear exCommentLable
 hi link exCommentLable ErrorMsg
 
+hi clear exConfirmLine
+hi exConfirmLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=DarkYellow
+
+hi clear exTargetLine
+hi exTargetLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=DarkYellow
+
 " showmarks highlight
 " =============================
 

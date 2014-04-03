@@ -1,15 +1,21 @@
 if &background == "dark"
+    " NOTE: keep visual mode words still using its own syntax color  
+    hi Visual gui=NONE guifg=NONE guibg=#004b56
+
     " ex
     " =============================
 
     hi clear exTransparent
     hi exTransparent gui=none guifg=background term=none cterm=none ctermfg=darkgray
 
-    " NOTE: keep visual mode words still using its own syntax color  
-    hi Visual gui=NONE guifg=NONE guibg=#004b56
-
     hi clear exCommentLable
     hi link exCommentLable ErrorMsg
+
+    hi clear exConfirmLine
+    hi exConfirmLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
+
+    hi clear exTargetLine
+    hi exTargetLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
 
     " showmarks highlight
     " =============================
@@ -40,16 +46,23 @@ if &background == "dark"
     hi clear EX_HL_label4
     hi EX_HL_label4 gui=none guibg=lightgreen term=none cterm=none ctermbg=darkgreen
 else
+    " NOTE: keep visual mode words still using its own syntax color  
+    " hi Visual gui=NONE guifg=NONE guibg=#93a1a1
+
     " ex
     " =============================
 
     hi clear exTransparent
     hi exTransparent gui=none guifg=background term=none cterm=none ctermfg=darkgray
 
-    " NOTE: keep visual mode words still using its own syntax color  
-    " hi Visual gui=NONE guifg=NONE guibg=#93a1a1
     hi clear exCommentLable
     hi link exCommentLable ErrorMsg
+
+    hi clear exConfirmLine
+    hi exConfirmLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
+
+    hi clear exTargetLine
+    hi exTargetLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
 
     " showmarks highlight
     " =============================
