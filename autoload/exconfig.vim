@@ -36,7 +36,7 @@ function exconfig#apply()
     if finddir(cwd) == ''
         let newcwd = fnamemodify( bufname('.'), ':p:h' )
         if search('cwd =', 'c') > 0
-            silent call setline('.','cwd = ' . newcwd . " -- <= WARNING: Changed by exVim! Can't find the old path: " . cwd)
+            silent call setline('.',"cwd = '" . newcwd . "' -- <= WARNING: Changed by exVim! Can't find the old path: " . cwd)
         endif
         call ex#warning("Can't find the path of cwd you provide! Reset it with current path. Use :w to save the changes!")
         let cwd = newcwd
@@ -48,7 +48,7 @@ function exconfig#apply()
     let g:exvim_folder = cwd.'/.exvim.'.project_name
 
     " set parent working directory
-    silent exec 'cd ' . escape(cwd, " ")
+    silent exec 'cd ' . fnameescape(cwd)
     let g:exvim_project_name = project_name
 
     let s:old_titlestring=&titlestring
@@ -217,7 +217,7 @@ function exconfig#apply()
             silent call exproject#set_folder_filter_mode( vimentry#get('folder_filter_mode','include') )
 
             let g:ex_project_file = g:exvim_folder . "/files.exproject"
-            silent exec 'EXProject ' . g:ex_project_file
+            silent exec 'EXProject ' . fnameescape(g:ex_project_file)
 
             " TODO: add dirty message in ex-project window and hint user to press \R for refresh
 
@@ -329,9 +329,9 @@ function exconfig#gen_sh_update_files(path)
 
         let fullpath = a:path . '/update-filelist.sh'
         let scripts = [
-                    \ 'export DEST='.a:path                        ,
+                    \ 'export DEST="'.a:path.'"'                   ,
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
-                    \ 'export FOLDERS="'.folder_pattern.'"'        ,
+                    \ 'export FOLDERS=('.folder_pattern.')'        ,
                     \ 'export FILE_SUFFIXS="'.file_pattern.'"'     ,
                     \ 'export TMP="${DEST}/_files"'                ,
                     \ 'export TARGET="${DEST}/files"'              ,
