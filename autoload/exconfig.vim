@@ -304,17 +304,17 @@ function exconfig#gen_sh_update_files(path)
         let wintoolpath = ex#path#translate(g:ex_tools_path,'windows')
         let wintoolpath = expand(wintoolpath)
         let scripts = [
-                    \ '@echo off'                                    ,
-                    \ 'set DEST='.winpath                            ,
-                    \ 'set TOOLS='.wintoolpath                       ,
-                    \ 'set FOLDERS='.folder_pattern                  ,
-                    \ 'set USE_FOLDERS='.use_folder_pattern          ,
-                    \ 'set FILE_SUFFIXS='.file_pattern               ,
-                    \ 'set FILE_FILTER_PATTERN='.file_pattern_gawk   ,
-                    \ 'set TMP=%DEST%\_files_gawk'                   ,
-                    \ 'set TMP2=%DEST%\_files'                       ,
-                    \ 'set TARGET=%DEST%\files'                      ,
-                    \ 'call %TOOLS%\shell\batch\update-filelist.bat' ,
+                    \ '@echo off'                                       ,
+                    \ 'set DEST='.winpath                               ,
+                    \ 'set TOOLS='.wintoolpath                          ,
+                    \ 'set FOLDERS='.folder_pattern                     ,
+                    \ 'set USE_FOLDERS='.use_folder_pattern             ,
+                    \ 'set FILE_SUFFIXS='.file_pattern                  ,
+                    \ 'set FILE_FILTER_PATTERN="'.file_pattern_gawk.'"' ,
+                    \ 'set TMP=%DEST%\_files_gawk'                      ,
+                    \ 'set TMP2=%DEST%\_files'                          ,
+                    \ 'set TARGET=%DEST%\files'                         ,
+                    \ 'call %TOOLS%\shell\batch\update-filelist.bat'    ,
                     \ ]
     else
         let folder_pattern = ''
