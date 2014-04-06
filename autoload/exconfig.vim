@@ -269,9 +269,14 @@ function exconfig#gen_sh_update_files(path)
         endif
 
         let folder_pattern = ""
+        let use_folder_pattern = 0
         for name in g:exvim_root_folders
-            let folder_pattern .= '"' . name . '" '
+            let folder_pattern .= '"' . name . '",'
         endfor
+        if !empty(g:exvim_root_folders)
+            let use_folder_pattern = 1
+            let folder_pattern = strpart( folder_pattern, 0, len(folder_pattern) - 1)
+        endif
 
         let file_pattern = ''
         let file_filters = vimentry#get('file_filter', [])
@@ -303,6 +308,7 @@ function exconfig#gen_sh_update_files(path)
                     \ 'set DEST='.winpath                            ,
                     \ 'set TOOLS='.wintoolpath                       ,
                     \ 'set FOLDERS='.folder_pattern                  ,
+                    \ 'set USE_FOLDERS='.use_folder_pattern          ,
                     \ 'set FILE_SUFFIXS='.file_pattern               ,
                     \ 'set FILE_FILTER_PATTERN='.file_pattern_gawk   ,
                     \ 'set TMP=%DEST%\_files_gawk'                   ,
@@ -483,14 +489,12 @@ endfunction
 " exconfig#update_exvim_files {{{
 function exconfig#update_exvim_files()
     if ex#os#is('windows')
-        let shell_silent = 'silent'
         let shell_exec = 'call'
         let shell_and = ' & '
         let shell_pause = ' && pause'
         let suffix = '.bat'
         let path = '.\.exvim.'.g:exvim_project_name.'\'
     else
-        let shell_silent = ''
         let shell_exec = 'sh'
         let shell_and = ' && '
         let shell_pause = ''
@@ -522,7 +526,7 @@ function exconfig#update_exvim_files()
 
     let cmd .= shell_pause
     call ex#hint('exVim Updating...')
-    exec shell_silent . ' !' . cmd
+    exec '!' . cmd
     call ex#hint('exVim Update Finish!')
 endfunction
 
