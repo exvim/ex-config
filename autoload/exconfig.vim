@@ -484,6 +484,44 @@ function exconfig#gen_sh_update_idutils(path)
 
     " save to file
     call writefile ( scripts, fullpath )
+
+    " generate id-lang-autogen.map
+    let file_filters = vimentry#get('file_filter',[])
+    if !empty(file_filters) 
+        let fullpath = a:path . '/id-lang-autogen.map'
+        if ex#os#is('windows')
+            let fullpath = ex#path#translate(fullpath,'windows')
+        endif
+        let scripts = [
+                    \ '# autogen id-lang.map',
+                    \ '*~                    IGNORE',
+                    \ '*.bak                 IGNORE',
+                    \ '*.bk[0-9]             IGNORE',
+                    \ '[sp].*                IGNORE',
+                    \ '*/.deps/*             IGNORE',
+                    \ '*/.svn/*              IGNORE',
+                    \ '*.svn-base            IGNORE',
+                    \ '.git/*                IGNORE',
+                    \ '.exvim*/*             IGNORE',
+                    \ '*.err                 IGNORE',
+                    \ '*.exe                 IGNORE',
+                    \ '*.lnk                 IGNORE',
+                    \ ]
+        for item in file_filters 
+            if item == ''
+                continue
+            endif
+            silent call add ( scripts, '*.'.item.'    text')
+        endfor
+
+        " save to file
+        call writefile( scripts, fullpath, 'b' )
+    else
+        let fullpath = a:path . '/id-lang-autogen.map'
+        if findfile ( fullpath ) != ''
+            call delete(fullpath)
+        endif
+    endif
 endfunction
 
 " exconfig#update_exvim_files {{{
