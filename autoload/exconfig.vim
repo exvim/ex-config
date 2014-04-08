@@ -307,7 +307,9 @@ function exconfig#gen_sh_update_files(path)
     else
         let folder_pattern = ''
         for name in g:exvim_root_folders
-            let folder_pattern .= './' . name . ','
+            " TODO: Issue #35
+            " let folder_pattern .= './' . name . ','
+            let folder_pattern .= './' . name . ' '
         endfor
         if !empty(g:exvim_root_folders)
             let folder_pattern = strpart( folder_pattern, 0, len(folder_pattern) - 1)
