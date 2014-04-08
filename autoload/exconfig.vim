@@ -20,32 +20,20 @@ function exconfig#apply()
     " pre-check
     " ===================================
 
-    let cwd = vimentry#get('cwd')
     let project_name = vimentry#get('project_name')
-
-    if cwd == ''
-        call ex#error("Can't find vimentry setting 'cwd'.")
-        return
-    endif
-
     if project_name == ''
         call ex#error("Can't find vimentry setting 'project_name'.")
         return
     endif
 
-    if finddir(cwd) == ''
-        let newcwd = fnamemodify( bufname('.'), ':p:h' )
-        if search('cwd =', 'c') > 0
-            silent call setline('.',"cwd = '" . newcwd . "' -- <= WARNING: Changed by exVim! Can't find the old path: " . cwd)
-        endif
-        call ex#warning("Can't find the path of cwd you provide! Reset it with current path. Use :w to save the changes!")
-        let cwd = newcwd
-        return
-    endif
+    " NOTE: we use the dir path of .vimentry instead of getcwd().  
+    " getcwd
+    let filename = expand('%')
+    let cwd = ex#path#translate( fnamemodify( filename, ':p:h' ), 'unix' )
 
     let g:exvim_project_name = project_name
     let g:exvim_project_root = cwd
-    let g:exvim_folder = cwd.'/.exvim.'.project_name
+    let g:exvim_folder = './.exvim.'.project_name
 
     " set parent working directory
     silent exec 'cd ' . fnameescape(cwd)
@@ -128,7 +116,7 @@ function exconfig#apply()
         let &tagrelative=0 " set notagrelative
 
         let s:old_tags=&tags
-        let &tags=escape(g:exvim_folder."/tags", " ")
+        let &tags=fnameescape(g:exvim_folder.'/tags')
 
         call exconfig#gen_sh_update_files(g:exvim_folder)
         call exconfig#gen_sh_update_ctags(g:exvim_folder)
@@ -399,7 +387,7 @@ function exconfig#gen_sh_update_ctags(path)
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
                     \ 'export CTAGS_CMD="'.ctags_cmd.'"'           ,
                     \ 'export OPTIONS="'.ctags_optioins.'"'        ,
-                    \ 'export TMP="./_exvim_tags"'                 ,
+                    \ 'export TMP="${DEST}/_tags"'                 ,
                     \ 'export TARGET="${DEST}/tags"'               ,
                     \ 'sh ${TOOLS}/shell/bash/update-tags.sh'      ,
                     \ ]
@@ -435,7 +423,7 @@ function exconfig#gen_sh_update_symbols(path)
         let scripts = [
                     \ 'export DEST="'.a:path.'"'                   ,
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
-                    \ 'export TMP="./_symbols"'                    ,
+                    \ 'export TMP="${DEST}/_symbols"'              ,
                     \ 'export TARGET="${DEST}/symbols"'            ,
                     \ 'sh ${TOOLS}/shell/bash/update-symbols.sh'   ,
                     \ ]
@@ -453,10 +441,14 @@ function exconfig#gen_sh_update_idutils(path)
     endif
 
     " get exclude folder filter options
-    let folder_filter = ''
+    " NOTE: this mkid have bug that if a folder name has white space, --prune="foo bar" will treat it as two folder.
+    let exclude_folders = ''
     for name in g:exvim_root_exclude_folders
-        let folder_filter .= '-p"' . name . '" '
+        let exclude_folders .= name . ' '
     endfor
+    if !empty(g:exvim_root_folders)
+        let exclude_folders = strpart( exclude_folders, 0, len(exclude_folders) - 1)
+    endif
 
     " generate scripts
     if ex#os#is('windows')
@@ -468,7 +460,7 @@ function exconfig#gen_sh_update_idutils(path)
                     \ '@echo off'                                   ,
                     \ 'set DEST='.winpath                           ,
                     \ 'set TOOLS='.wintoolpath                      ,
-                    \ 'set FOLDER_FILTER='.folder_filter            ,
+                    \ 'set EXCLUDE_FOLDERS='.exclude_folders        ,
                     \ 'set TMP=.\_exvim_ID'                         ,
                     \ 'set TARGET=%DEST%\ID'                        ,
                     \ 'call %TOOLS%\shell\batch\update-idutils.bat' ,
@@ -476,12 +468,12 @@ function exconfig#gen_sh_update_idutils(path)
     else
         let fullpath = a:path . '/update-idutils.sh'
         let scripts = [
-                    \ 'export DEST="'.a:path.'"'                   ,
-                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
-                    \ 'export FOLDER_FILTER="'.folder_filter.'"'   ,
-                    \ 'export TMP="./_exvim_ID"'                   ,
-                    \ 'export TARGET="${DEST}/ID"'                 ,
-                    \ 'sh ${TOOLS}/shell/bash/update-idutils.sh'   ,
+                    \ 'export DEST="'.a:path.'"'                     ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"'   ,
+                    \ 'export EXCLUDE_FOLDERS="'.exclude_folders.'"' ,
+                    \ 'export TMP="${DEST}/_ID"'                     ,
+                    \ 'export TARGET="${DEST}/ID"'                   ,
+                    \ 'sh ${TOOLS}/shell/bash/update-idutils.sh'     ,
                     \ ]
     endif
 
