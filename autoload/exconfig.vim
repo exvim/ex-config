@@ -376,7 +376,7 @@ function exconfig#gen_sh_update_ctags(path)
                     \ 'set TOOLS='.wintoolpath                   ,
                     \ 'set CTAGS_CMD='.ctags_cmd                 ,
                     \ 'set OPTIONS='.ctags_optioins              ,
-                    \ 'set TMP=.\_exvim_tags'                    ,
+                    \ 'set TMP=%DEST%\_tags'                     ,
                     \ 'set TARGET=%DEST%\tags'                   ,
                     \ 'call %TOOLS%\shell\batch\update-tags.bat' ,
                     \ ]
@@ -414,7 +414,7 @@ function exconfig#gen_sh_update_symbols(path)
                     \ '@echo off'                                   ,
                     \ 'set DEST='.winpath                           ,
                     \ 'set TOOLS='.wintoolpath                      ,
-                    \ 'set TMP=.\_symbols'                          ,
+                    \ 'set TMP=%DEST%\_symbols'                     ,
                     \ 'set TARGET=%DEST%\symbols'                   ,
                     \ 'call %TOOLS%\shell\batch\update-symbols.bat' ,
                     \ ]
@@ -461,7 +461,7 @@ function exconfig#gen_sh_update_idutils(path)
                     \ 'set DEST='.winpath                           ,
                     \ 'set TOOLS='.wintoolpath                      ,
                     \ 'set EXCLUDE_FOLDERS='.exclude_folders        ,
-                    \ 'set TMP=.\_exvim_ID'                         ,
+                    \ 'set TMP=%DEST%\_ID'                          ,
                     \ 'set TARGET=%DEST%\ID'                        ,
                     \ 'call %TOOLS%\shell\batch\update-idutils.bat' ,
                     \ ]
