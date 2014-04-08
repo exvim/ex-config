@@ -337,7 +337,7 @@ function exconfig#gen_sh_update_files(path)
         let scripts = [
                     \ 'export DEST="'.a:path.'"'                   ,
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
-                    \ 'export FOLDERS=('.folder_pattern.')'        ,
+                    \ 'export FOLDERS="'.folder_pattern.'"'        ,
                     \ 'export FILE_SUFFIXS="'.file_pattern.'"'     ,
                     \ 'export TMP="${DEST}/_files"'                ,
                     \ 'export TARGET="${DEST}/files"'              ,
