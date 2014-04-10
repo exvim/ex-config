@@ -209,6 +209,16 @@ function exconfig#apply()
 
             " TODO: add dirty message in ex-project window and hint user to press \R for refresh
 
+            " bind key mapping
+            nnoremap <unique> <leader>fc :EXProjectFind<CR>
+            if has('gui_running')
+                if has ('mac')
+                    nnoremap <unique> Ø :EXProjectOpen<CR>:redraw<CR>/
+                else
+                    nnoremap <unique> <M-O> :EXProjectOpen<CR>:redraw<CR>/
+                endif
+            endif
+
             " back to edit window
             doautocmd BufLeave
             doautocmd WinLeave
@@ -231,6 +241,16 @@ function exconfig#apply()
                     for pattern in folder_filter
                         silent call add ( g:NERDTreeIgnore, pattern.'[[dir]]' )
                     endfor
+                endif
+            endif
+
+            " bind key mapping
+            nnoremap <unique> <leader>fc :NERDTreeFind<CR>
+            if has('gui_running') "  the <alt> key is only available in gui mode.
+                if has ('mac')
+                    nnoremap <unique> Ø :NERDTreeFind<CR>:redraw<CR>/
+                else
+                    nnoremap <unique> <M-O> :NERDTreeFind<CR>:redraw<CR>/
                 endif
             endif
 
