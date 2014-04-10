@@ -191,10 +191,15 @@ function exconfig#apply()
     " open project window
     if vimentry#check('enable_project_browser', 'true')
         let project_browser = vimentry#get( 'project_browser' )
+        let g:ex_project_file = g:exvim_folder . "/files.exproject"
 
         " NOTE: Any windows open or close during VimEnter will not invoke WinEnter,WinLeave event
         " this is why I manually call doautocmd here
         if project_browser == 'ex'
+            if exists ( ':NERDTreeClose' )
+                exec 'NERDTreeClose'
+            endif
+
             " open ex_project window
             doautocmd BufLeave
             doautocmd WinLeave
@@ -204,17 +209,26 @@ function exconfig#apply()
             silent call exproject#set_folder_filters( vimentry#get('folder_filter',[]) )
             silent call exproject#set_folder_filter_mode( vimentry#get('folder_filter_mode','include') )
 
-            let g:ex_project_file = g:exvim_folder . "/files.exproject"
             silent exec 'EXProject ' . fnameescape(g:ex_project_file)
 
             " TODO: add dirty message in ex-project window and hint user to press \R for refresh
 
             " bind key mapping
+            if mapcheck('<leader>fc','n') != ""
+                nunmap <leader>fc
+            endif
             nnoremap <unique> <leader>fc :EXProjectFind<CR>
+
             if has('gui_running')
                 if has ('mac')
+                    if mapcheck('Ø','n') != ""
+                        nunmap Ø
+                    endif
                     nnoremap <unique> Ø :EXProjectOpen<CR>:redraw<CR>/
                 else
+                    if mapcheck('<M-O>','n') != ""
+                        nunmap <M-O>
+                    endif
                     nnoremap <unique> <M-O> :EXProjectOpen<CR>:redraw<CR>/
                 endif
             endif
@@ -225,6 +239,9 @@ function exconfig#apply()
             call ex#window#goto_edit_window()
 
         elseif project_browser == 'nerdtree'
+            if exists ( ':EXProjectClose' )
+                exec 'EXProjectClose'
+            endif
 
             " Example: let g:NERDTreeIgnore=['.git$[[dir]]', '.o$[[file]]']
             let g:NERDTreeIgnore = [] " clear ignore list
@@ -245,11 +262,21 @@ function exconfig#apply()
             endif
 
             " bind key mapping
+            if mapcheck('<leader>fc','n') != ""
+                nunmap <leader>fc
+            endif
             nnoremap <unique> <leader>fc :NERDTreeFind<CR>
+
             if has('gui_running') "  the <alt> key is only available in gui mode.
                 if has ('mac')
+                    if mapcheck('Ø','n') != ""
+                        nunmap Ø
+                    endif
                     nnoremap <unique> Ø :NERDTreeFind<CR>:redraw<CR>/
                 else
+                    if mapcheck('<M-O>','n') != ""
+                        nunmap <M-O>
+                    endif
                     nnoremap <unique> <M-O> :NERDTreeFind<CR>:redraw<CR>/
                 endif
             endif
