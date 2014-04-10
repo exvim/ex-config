@@ -307,9 +307,7 @@ function exconfig#gen_sh_update_files(path)
     else
         let folder_pattern = ''
         for name in g:exvim_root_folders
-            " TODO: Issue #35
-            " let folder_pattern .= './' . name . ','
-            let folder_pattern .= './' . name . ' '
+            let folder_pattern .= './' . name . ','
         endfor
         if !empty(g:exvim_root_folders)
             let folder_pattern = strpart( folder_pattern, 0, len(folder_pattern) - 1)
@@ -328,6 +326,7 @@ function exconfig#gen_sh_update_files(path)
 
         let fullpath = a:path . '/update-filelist.sh'
         let scripts = [
+                    \ '#!/bin/bash'                                ,
                     \ 'export DEST="'.a:path.'"'                   ,
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
                     \ 'export FOLDERS="'.folder_pattern.'"'        ,
@@ -385,6 +384,7 @@ function exconfig#gen_sh_update_ctags(path)
     else
         let fullpath = a:path . '/update-tags.sh'
         let scripts = [
+                    \ '#!/bin/bash'                                ,
                     \ 'export DEST="'.a:path.'"'                   ,
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
                     \ 'export CTAGS_CMD="'.ctags_cmd.'"'           ,
@@ -423,6 +423,7 @@ function exconfig#gen_sh_update_symbols(path)
     else
         let fullpath = a:path . '/update-symbols.sh'
         let scripts = [
+                    \ '#!/bin/bash'                                ,
                     \ 'export DEST="'.a:path.'"'                   ,
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
                     \ 'export TMP="${DEST}/_symbols"'              ,
@@ -470,6 +471,7 @@ function exconfig#gen_sh_update_idutils(path)
     else
         let fullpath = a:path . '/update-idutils.sh'
         let scripts = [
+                    \ '#!/bin/bash'                                  ,
                     \ 'export DEST="'.a:path.'"'                     ,
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"'   ,
                     \ 'export EXCLUDE_FOLDERS="'.exclude_folders.'"' ,
