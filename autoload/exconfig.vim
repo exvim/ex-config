@@ -326,14 +326,14 @@ function exconfig#gen_sh_update_files(path)
 
         let fullpath = a:path . '/update-filelist.sh'
         let scripts = [
-                    \ '#!/bin/bash'                                 ,
-                    \ 'export DEST="'.a:path.'"'                    ,
-                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"'  ,
-                    \ 'export FOLDERS="'.folder_pattern.'"'         ,
-                    \ 'export FILE_SUFFIXS="'.file_pattern.'"'      ,
-                    \ 'export TMP="${DEST}/_files"'                 ,
-                    \ 'export TARGET="${DEST}/files"'               ,
-                    \ 'bash ${TOOLS}/shell/bash/update-filelist.sh' ,
+                    \ '#!/bin/bash'                                ,
+                    \ 'export DEST="'.a:path.'"'                   ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                    \ 'export FOLDERS="'.folder_pattern.'"'        ,
+                    \ 'export FILE_SUFFIXS="'.file_pattern.'"'     ,
+                    \ 'export TMP="${DEST}/_files"'                ,
+                    \ 'export TARGET="${DEST}/files"'              ,
+                    \ 'sh ${TOOLS}/shell/bash/update-filelist.sh'  ,
                     \ ]
     endif
 
@@ -391,7 +391,7 @@ function exconfig#gen_sh_update_ctags(path)
                     \ 'export OPTIONS="'.ctags_optioins.'"'        ,
                     \ 'export TMP="${DEST}/_tags"'                 ,
                     \ 'export TARGET="${DEST}/tags"'               ,
-                    \ 'bash ${TOOLS}/shell/bash/update-tags.sh'    ,
+                    \ 'sh ${TOOLS}/shell/bash/update-tags.sh'      ,
                     \ ]
     endif
 
@@ -428,7 +428,7 @@ function exconfig#gen_sh_update_symbols(path)
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
                     \ 'export TMP="${DEST}/_symbols"'              ,
                     \ 'export TARGET="${DEST}/symbols"'            ,
-                    \ 'bash ${TOOLS}/shell/bash/update-symbols.sh' ,
+                    \ 'sh ${TOOLS}/shell/bash/update-symbols.sh'   ,
                     \ ]
     endif
 
@@ -477,7 +477,7 @@ function exconfig#gen_sh_update_idutils(path)
                     \ 'export EXCLUDE_FOLDERS="'.exclude_folders.'"' ,
                     \ 'export TMP="${DEST}/_ID"'                     ,
                     \ 'export TARGET="${DEST}/ID"'                   ,
-                    \ 'bash ${TOOLS}/shell/bash/update-idutils.sh'   ,
+                    \ 'sh ${TOOLS}/shell/bash/update-idutils.sh'     ,
                     \ ]
     endif
 
@@ -532,7 +532,7 @@ function exconfig#update_exvim_files()
         let suffix = '.bat'
         let path = '.\.exvim.'.g:exvim_project_name.'\'
     else
-        let shell_exec = 'bash'
+        let shell_exec = 'sh'
         let shell_and = ' && '
         let shell_pause = ''
         let suffix = '.sh'
