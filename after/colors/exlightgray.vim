@@ -3,12 +3,6 @@ exec 'AirlineTheme kolor'
 " ex
 " =============================
 
-hi clear exTransparent
-hi exTransparent gui=none guifg=background term=none cterm=none ctermfg=darkgray
-
-hi clear exCommentLable
-hi link exCommentLable ErrorMsg
-
 hi clear exConfirmLine
 hi exConfirmLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=DarkYellow
 
@@ -26,11 +20,11 @@ hi ShowMarksHLl term=bold cterm=none ctermbg=lightblue gui=none guibg=lightblue
 hi clear ShowMarksHLu
 hi ShowMarksHLu term=bold cterm=bold ctermbg=lightred ctermfg=darkred gui=bold guibg=lightred guifg=darkred
 
-hi clear EX_HL_cursorhl
-hi EX_HL_cursorhl gui=none guibg=White term=none cterm=none ctermbg=white 
-
 " easyhl
 " =============================
+
+hi clear EX_HL_cursorhl
+hi EX_HL_cursorhl gui=none guibg=White term=none cterm=none ctermbg=white 
 
 hi clear EX_HL_label1
 hi EX_HL_label1 gui=none guibg=lightcyan term=none cterm=none ctermbg=lightcyan

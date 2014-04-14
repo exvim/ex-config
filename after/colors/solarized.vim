@@ -5,12 +5,6 @@ if &background == "dark"
     " ex
     " =============================
 
-    hi clear exTransparent
-    hi exTransparent gui=none guifg=background term=none cterm=none ctermfg=darkgray
-
-    hi clear exCommentLable
-    hi link exCommentLable ErrorMsg
-
     hi clear exConfirmLine
     hi exConfirmLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
 
@@ -51,12 +45,6 @@ else
 
     " ex
     " =============================
-
-    hi clear exTransparent
-    hi exTransparent gui=none guifg=background term=none cterm=none ctermfg=darkgray
-
-    hi clear exCommentLable
-    hi link exCommentLable ErrorMsg
 
     hi clear exConfirmLine
     hi exConfirmLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
