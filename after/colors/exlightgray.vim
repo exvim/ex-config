@@ -9,17 +9,6 @@ hi exConfirmLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=DarkYellow
 hi clear exTargetLine
 hi exTargetLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=DarkYellow
 
-" showmarks highlight
-" =============================
-
-" For marks a-z
-hi clear ShowMarksHLl
-hi ShowMarksHLl term=bold cterm=none ctermbg=lightblue gui=none guibg=lightblue
-
-" For marks A-Z
-hi clear ShowMarksHLu
-hi ShowMarksHLu term=bold cterm=bold ctermbg=lightred ctermfg=darkred gui=bold guibg=lightred guifg=darkred
-
 " easyhl
 " =============================
 
@@ -59,3 +48,37 @@ hi ex_gs_header gui=bold guifg=DarkRed guibg=LightGray term=bold cterm=bold cter
 hi clear ex_gs_filename
 hi link ex_gs_filename Statement
 
+" showmarks highlight
+" =============================
+
+" For marks a-z
+hi clear ShowMarksHLl
+hi ShowMarksHLl term=bold cterm=none ctermbg=lightblue gui=none guibg=lightblue
+
+" For marks A-Z
+hi clear ShowMarksHLu
+hi ShowMarksHLu term=bold cterm=bold ctermbg=lightred ctermfg=darkred gui=bold guibg=lightred guifg=darkred
+
+" taglist highlight
+" =============================
+
+" TagListTagName  - Used for tag names
+hi clear MyTagListTagName
+hi MyTagListTagName term=bold cterm=none ctermfg=Black ctermbg=DarkYellow gui=none guifg=Black guibg=#ffe4b3
+
+" TagListTagScope - Used for tag scope
+hi clear MyTagListTagScope
+hi MyTagListTagScope term=NONE cterm=NONE ctermfg=Blue gui=NONE guifg=Blue 
+
+" TagListTitle    - Used for tag titles
+hi clear MyTagListTitle
+" hi MyTagListTitle term=bold cterm=bold ctermfg=DarkRed ctermbg=LightGray gui=bold guifg=DarkRed guibg=LightGray 
+hi MyTagListTitle term=bold cterm=bold ctermfg=DarkRed ctermbg=Gray gui=bold guifg=DarkRed guibg=Gray 
+
+" TagListComment  - Used for comments
+hi clear MyTagListComment
+hi MyTagListComment ctermfg=DarkGreen guifg=DarkGreen 
+
+" TagListFileName - Used for filenames
+hi clear MyTagListFileName
+hi MyTagListFileName term=bold cterm=bold ctermfg=Black ctermbg=LightBlue gui=bold guifg=Black guibg=LightBlue

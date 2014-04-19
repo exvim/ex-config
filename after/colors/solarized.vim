@@ -11,6 +11,24 @@ if &background == "dark"
     hi clear exTargetLine
     hi exTargetLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
 
+    " easyhl
+    " =============================
+
+    hi clear EX_HL_cursorhl
+    hi EX_HL_cursorhl gui=none guibg=darkgray term=none cterm=none ctermbg=darkgray
+
+    hi clear EX_HL_label1
+    hi EX_HL_label1 gui=none guibg=lightblue term=none cterm=none ctermbg=lightblue
+    
+    hi clear EX_HL_label2
+    hi EX_HL_label2 gui=none guibg=lightmagenta term=none cterm=none ctermbg=darkmagenta
+
+    hi clear EX_HL_label3
+    hi EX_HL_label3 gui=none guibg=darkyellow term=none cterm=none ctermbg=darkyellow
+
+    hi clear EX_HL_label4
+    hi EX_HL_label4 gui=none guibg=darkgreen term=none cterm=none ctermbg=darkgreen
+
     " showmarks highlight
     " =============================
 
@@ -22,23 +40,11 @@ if &background == "dark"
     hi clear ShowMarksHLu
     hi ShowMarksHLu term=bold cterm=bold ctermbg=lightred ctermfg=darkred gui=bold guibg=lightred guifg=darkred
 
-    " easyhl
+    " taglist highlight
     " =============================
 
-    hi clear EX_HL_cursorhl
-    hi EX_HL_cursorhl gui=none guibg=darkgray term=none cterm=none ctermbg=darkgray
-
-    hi clear EX_HL_label1
-    hi EX_HL_label1 gui=none guibg=lightcyan term=none cterm=none ctermbg=darkcyan
-    
-    hi clear EX_HL_label2
-    hi EX_HL_label2 gui=none guibg=lightmagenta term=none cterm=none ctermbg=darkmagenta
-
-    hi clear EX_HL_label3
-    hi EX_HL_label3 gui=none guibg=lightred term=none cterm=none ctermbg=darkred
-
-    hi clear EX_HL_label4
-    hi EX_HL_label4 gui=none guibg=lightgreen term=none cterm=none ctermbg=darkgreen
+    hi clear MyTagListFileName
+    hi link MyTagListFileName Directory
 else
     " NOTE: keep visual mode words still using its own syntax color  
     " hi Visual gui=NONE guifg=NONE guibg=#93a1a1
@@ -51,17 +57,6 @@ else
 
     hi clear exTargetLine
     hi exTargetLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
-
-    " showmarks highlight
-    " =============================
-
-    " For marks a-z
-    hi clear ShowMarksHLl
-    hi ShowMarksHLl term=bold cterm=none ctermbg=grey gui=none guibg=grey
-
-    " For marks A-Z
-    hi clear ShowMarksHLu
-    hi ShowMarksHLu term=bold cterm=bold ctermbg=lightred ctermfg=darkred gui=bold guibg=lightred guifg=darkred
 
     " easyhl
     " =============================
@@ -80,6 +75,23 @@ else
 
     hi clear EX_HL_label4
     hi EX_HL_label4 gui=none guibg=lightgreen term=none cterm=none ctermbg=lightgreen
+
+    " showmarks highlight
+    " =============================
+
+    " For marks a-z
+    hi clear ShowMarksHLl
+    hi ShowMarksHLl term=bold cterm=none ctermbg=grey gui=none guibg=grey
+
+    " For marks A-Z
+    hi clear ShowMarksHLu
+    hi ShowMarksHLu term=bold cterm=bold ctermbg=lightred ctermfg=darkred gui=bold guibg=lightred guifg=darkred
+
+    " taglist highlight
+    " =============================
+
+    hi clear MyTagListFileName
+    hi link MyTagListFileName Directory
 endif
 
 " vim:ts=4:sw=4:sts=4 et fdm=marker:
