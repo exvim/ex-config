@@ -123,6 +123,8 @@ function exconfig#apply()
 
         " symbols
         if vimentry#check('enable_symbols', 'true')
+            call exsymbol#set_file(g:exvim_folder.'/symbols')
+            call ex#set_symbol_path(g:exvim_folder.'/symbols')
             call exconfig#gen_sh_update_symbols(g:exvim_folder)
         endif
 
