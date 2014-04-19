@@ -140,7 +140,7 @@ function exconfig#apply()
     if vimentry#check('enable_gsearch', 'true')
         let gsearch_engine = vimentry#get('gsearch_engine')
         if gsearch_engine == 'idutils'
-            " TODO: call exUtility#CreateIDLangMap ( exUtility#GetProjectFilter("file_filter") )
+            call exgsearch#set_id_file(g:exvim_folder.'/ID')
             call exconfig#gen_sh_update_idutils(g:exvim_folder)
         endif
     endif
