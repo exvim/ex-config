@@ -11,7 +11,7 @@ if &background == "dark"
     hi clear exTargetLine
     hi exTargetLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
 
-    " easyhl
+    " ex-easyhl
     " =============================
 
     hi clear EX_HL_cursorhl
@@ -29,7 +29,7 @@ if &background == "dark"
     hi clear EX_HL_label4
     hi EX_HL_label4 gui=none guibg=darkgreen term=none cterm=none ctermbg=darkgreen
 
-    " showmarks highlight
+    " ex-showmarks highlight
     " =============================
 
     " For marks a-z
@@ -40,7 +40,7 @@ if &background == "dark"
     hi clear ShowMarksHLu
     hi ShowMarksHLu term=bold cterm=bold ctermbg=lightred ctermfg=darkred gui=bold guibg=lightred guifg=darkred
 
-    " taglist highlight
+    " ex-taglist highlight
     " =============================
 
     hi clear MyTagListFileName
@@ -58,7 +58,7 @@ else
     hi clear exTargetLine
     hi exTargetLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
 
-    " easyhl
+    " ex-easyhl
     " =============================
 
     hi clear EX_HL_cursorhl
@@ -76,7 +76,7 @@ else
     hi clear EX_HL_label4
     hi EX_HL_label4 gui=none guibg=lightgreen term=none cterm=none ctermbg=lightgreen
 
-    " showmarks highlight
+    " ex-showmarks highlight
     " =============================
 
     " For marks a-z
@@ -87,7 +87,7 @@ else
     hi clear ShowMarksHLu
     hi ShowMarksHLu term=bold cterm=bold ctermbg=lightred ctermfg=darkred gui=bold guibg=lightred guifg=darkred
 
-    " taglist highlight
+    " ex-taglist highlight
     " =============================
 
     hi clear MyTagListFileName
