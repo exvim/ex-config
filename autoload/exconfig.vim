@@ -48,11 +48,12 @@ function exconfig#apply()
         silent call mkdir(path)
     endif
 
-    " create folder .exvim.xxx/tmp/ if not exists
-    let path = g:exvim_folder.'/tmp'
+    " create folder .exvim.xxx/view/ if not exists, and set viewdir to it
+    let path = g:exvim_folder.'/view'
     if finddir(path) == ''
         silent call mkdir(path)
     endif
+    let &viewdir = g:exvim_folder . '/view'
 
     " ===================================
     " general settings
