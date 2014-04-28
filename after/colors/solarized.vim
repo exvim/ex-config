@@ -47,7 +47,7 @@ if &background == "dark"
     hi link MyTagListFileName Directory
 else
     " NOTE: keep visual mode words still using its own syntax color  
-    hi Visual gui=NONE guifg=NONE guibg=#fdf6e3
+    hi Visual gui=NONE guifg=NONE guibg=#ddd6c3
 
     " ex
     " =============================
