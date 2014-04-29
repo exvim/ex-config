@@ -412,8 +412,8 @@ function exconfig#gen_sh_update_ctags(path)
     endif
 
     " get ctags options
+    let ctags_optioins = '--fields=+iaS --extra=+q'
     " TODO:
-    let ctags_optioins = ''
 
     " generate scripts
     if ex#os#is('windows')
