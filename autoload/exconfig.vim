@@ -132,10 +132,7 @@ function exconfig#apply()
         " create .exvim.xxx/hierarchies/
         if vimentry#check('enable_inherits', 'true')
             " TODO:
-            " let inherit_directory_path = g:exES_CWD.'/'.g:exES_vimfiles_dirname.'/.hierarchies'
-            " if finddir(inherit_directory_path) == ''
-            "   silent call mkdir(inherit_directory_path)
-            " endif
+            call exconfig#gen_sh_update_inherits(g:exvim_folder)
         endif
     endif
 
@@ -486,6 +483,43 @@ function exconfig#gen_sh_update_symbols(path)
     call writefile ( scripts, fullpath )
 endfunction
 
+" exconfig#gen_sh_update_inherits {{{
+function exconfig#gen_sh_update_inherits(path)
+    " check if gawk command executable
+    if !executable('gawk')
+        call ex#warning("Can't find gawk command in your system. Please install it first!")
+    endif
+
+    " generate scripts
+    if ex#os#is('windows')
+        let fullpath = a:path . '/update-inherits.bat'
+        let winpath = ex#path#translate(a:path,'windows')
+        let wintoolpath = ex#path#translate(g:ex_tools_path,'windows')
+        let wintoolpath = expand(wintoolpath)
+        let scripts = [
+                    \ '@echo off'                                   ,
+                    \ 'set DEST='.winpath                           ,
+                    \ 'set TOOLS='.wintoolpath                      ,
+                    \ 'set TMP=%DEST%\_inherits'                     ,
+                    \ 'set TARGET=%DEST%\inherits'                   ,
+                    \ 'call %TOOLS%\shell\batch\update-inherits.bat' ,
+                    \ ]
+    else
+        let fullpath = a:path . '/update-inherits.sh'
+        let scripts = [
+                    \ '#!/bin/bash'                                ,
+                    \ 'export DEST="'.a:path.'"'                   ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                    \ 'export TMP="${DEST}/_inherits"'              ,
+                    \ 'export TARGET="${DEST}/inherits"'            ,
+                    \ 'sh ${TOOLS}/shell/bash/update-inherits.sh'   ,
+                    \ ]
+    endif
+
+    " save to file
+    call writefile ( scripts, fullpath )
+endfunction
+
 " exconfig#gen_sh_update_idutils {{{
 function exconfig#gen_sh_update_idutils(path)
     " check if mkid command executable
@@ -600,8 +634,15 @@ function exconfig#update_exvim_files()
         let cmd .= and
         let cmd .= shell_exec . ' ' . path.'update-tags'.suffix
 
-        let cmd .= and
-        let cmd .= shell_exec . ' ' . path.'update-symbols'.suffix
+        if vimentry#check('enable_symbols','true')
+            let cmd .= and
+            let cmd .= shell_exec . ' ' . path.'update-symbols'.suffix
+        endif
+
+        if vimentry#check('enable_inherits','true')
+            let cmd .= and
+            let cmd .= shell_exec . ' ' . path.'update-inherits'.suffix
+        endif
     endif
 
     " update IDs
