@@ -131,7 +131,9 @@ function exconfig#apply()
 
         " create .exvim.xxx/hierarchies/
         if vimentry#check('enable_inherits', 'true')
-            " TODO:
+            call exhierarchy#set_inheirts_file(g:exvim_folder.'/inherits')
+            call exhierarchy#set_dot_file(g:exvim_folder.'/hv.dot')
+            call exhierarchy#set_img_file(g:exvim_folder.'/hv.png')
             call exconfig#gen_sh_update_inherits(g:exvim_folder)
         endif
     endif
