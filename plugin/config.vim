@@ -94,11 +94,7 @@ if !exists('g:ex_project_types')
 endif
 
 if !exists('g:ex_tools_path')
-    if exists('g:exvim_dev')
-        let g:ex_tools_path = './vimfiles/tools/'
-    else
-        let g:ex_tools_path = '~/.vim/tools/'
-    endi
+    let g:ex_tools_path = '~/.vim/tools/'
 endif
 " }}}
 
