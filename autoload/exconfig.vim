@@ -210,6 +210,7 @@ function exconfig#apply()
             silent call exproject#set_file_ignore_patterns( vimentry#get('file_ignore_pattern',[]) )
             silent call exproject#set_folder_filters( vimentry#get('folder_filter',[]) )
             silent call exproject#set_folder_filter_mode( vimentry#get('folder_filter_mode','include') )
+            silent call exproject#set_folder_root_only( vimentry#get('folder_filter_root_only','true') )
 
             silent exec 'EXProject ' . fnameescape(g:ex_project_file)
 
