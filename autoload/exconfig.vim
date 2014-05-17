@@ -183,9 +183,6 @@ function exconfig#apply()
     "   endfor
     " endif
 
-    " finally we need to generate shell scripts for :Update command
-    " TODO: call exUtility#CreateQuickGenProject ()
-
     " ===================================
     " run customized scripts
     " ===================================
@@ -421,7 +418,6 @@ function exconfig#gen_sh_update_ctags(path)
 
     " get ctags options
     let ctags_optioins = '--fields=+iaS --extra=+q'
-    " TODO:
 
     " generate scripts
     if ex#os#is('windows')
