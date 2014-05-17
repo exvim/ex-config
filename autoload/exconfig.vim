@@ -85,10 +85,18 @@ function exconfig#apply()
             endfor
 
             " set exclude folders
-            let g:exvim_root_exclude_folders = copy(folder_filter)
+            for name in folder_filter
+                if isdirectory(name)
+                    silent call add ( g:exvim_root_exclude_folders, name )
+                endif
+            endfor
         else
             " set include folders
-            let g:exvim_root_folders = copy(folder_filter)
+            for name in folder_filter
+                if isdirectory(name)
+                    silent call add ( g:exvim_root_folders, name )
+                endif
+            endfor
 
             " set exclude folders
             let filelist = split(globpath(cwd,'*'),'\n')
