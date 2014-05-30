@@ -119,6 +119,18 @@ function exconfig#apply()
         endfor
     endif
 
+    " Building
+    let builder = vimentry#get('builder')
+    let build_opt = vimentry#get('build_opt')
+    call exqfix#set_compiler(builder)
+    call exqfix#set_qfix_file(g:exvim_folder.'/errors.qfix')
+
+    if mapcheck('<leader>bb','n') != ""
+        nunmap <leader>bb
+    endif
+    let build_cmd = ":call exqfix#build('".build_opt."')<CR>"
+    call exqfix#register_hotkey( 101, 0, '<leader>bb', build_cmd, 'Build project and get errors.' )
+
     " set tag file path
     if vimentry#check('enable_tags', 'true')
         let s:old_tagrelative=&tagrelative
