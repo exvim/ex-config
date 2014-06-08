@@ -45,6 +45,12 @@ if &background == "dark"
 
     hi clear MyTagListFileName
     hi link MyTagListFileName Directory
+
+    " ex-project highlight
+    " =============================
+
+    hi link ex_pj_tree_line NONE
+    hi ex_pj_tree_line term=italic ctermfg=11 gui=none guifg=#586e75
 else
     " NOTE: keep visual mode words still using its own syntax color  
     hi Visual gui=NONE guifg=NONE guibg=#ddd6c3
@@ -92,6 +98,12 @@ else
 
     hi clear MyTagListFileName
     hi link MyTagListFileName Directory
+
+    " ex-project highlight
+    " =============================
+
+    hi link ex_pj_tree_line NONE
+    hi ex_pj_tree_line term=italic ctermfg=1 gui=none guifg=#93a1a1
 endif
 
 " vim:ts=4:sw=4:sts=4 et fdm=marker:
