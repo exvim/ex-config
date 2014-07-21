@@ -629,6 +629,17 @@ function exconfig#gen_sh_update_idutils(path)
                 \ '*.min.js              IGNORE',
                 \ ]
 
+    " set folder_filter exclude with folder_filter_root_only is false
+    if vimentry#check('folder_filter_mode', 'exclude') && vimentry#check('folder_filter_root_only', 'false')
+        let ignore_folders = vimentry#get('folder_filter',[])
+        for item in ignore_folders 
+            if item == ''
+                continue
+            endif
+            silent call add ( scripts, '*/'.item.'/*    IGNORE')
+        endfor
+    endif
+
     " set file ignore pattern
     let file_ignore_pattern = vimentry#get('file_ignore_pattern',[])
     for item in file_ignore_pattern 
