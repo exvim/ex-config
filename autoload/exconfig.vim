@@ -540,6 +540,26 @@ function exconfig#gen_sh_update_inherits(path)
 endfunction
 
 " exconfig#gen_sh_update_idutils {{{
+let s:default_id_file_filter = [
+    \ 'h', 'h++', 'h.in', 'H', 'hh', 'hp', 'hpp', 'hxx', 'inl',
+    \ 'c', 'C', 'cc', 'cp', 'cpp', 'cxx',
+    \ 'cs',
+    \ 'm',
+    \ 'hlsl', 'vsh', 'psh', 'fx', 'fxh', 'cg', 'shd',
+    \ 'asm', 'ASM', 's', 'S',
+    \ 'py', 'pyx', 'pxd', 'scons',
+    \ 'rb',
+    \ 'js', 'as', 'ts', 'coffee',
+    \ 'lua',
+    \ 'ms',
+    \ 'pl', 'pm',
+    \ 'vim',
+    \ 'html', 'htm', 'shtml', 'stm',
+    \ 'xml', 'mms', 'glm',
+    \ 'json',
+    \ 'l', 'lex', 'y', 'yacc',
+    \ ]
+
 function exconfig#gen_sh_update_idutils(path)
     " check if mkid command executable
     if !executable('mkid')
@@ -588,42 +608,50 @@ function exconfig#gen_sh_update_idutils(path)
     call writefile ( scripts, fullpath )
 
     " generate id-lang-autogen.map
-    let file_filters = vimentry#get('file_filter',[])
-    if !empty(file_filters) 
-        let fullpath = a:path . '/id-lang-autogen.map'
-        if ex#os#is('windows')
-            let fullpath = ex#path#translate(fullpath,'windows')
-        endif
-        let scripts = [
-                    \ '# autogen id-lang.map',
-                    \ '*~                    IGNORE',
-                    \ '*.bak                 IGNORE',
-                    \ '*.bk[0-9]             IGNORE',
-                    \ '[sp].*                IGNORE',
-                    \ '*/.deps/*             IGNORE',
-                    \ '*/.svn/*              IGNORE',
-                    \ '*.svn-base            IGNORE',
-                    \ '.git/*                IGNORE',
-                    \ '.exvim*/*             IGNORE',
-                    \ '*.err                 IGNORE',
-                    \ '*.exe                 IGNORE',
-                    \ '*.lnk                 IGNORE',
-                    \ ]
-        for item in file_filters 
-            if item == ''
-                continue
-            endif
-            silent call add ( scripts, '*.'.item.'    text')
-        endfor
-
-        " save to file
-        call writefile( scripts, fullpath, 'b' )
-    else
-        let fullpath = a:path . '/id-lang-autogen.map'
-        if findfile ( fullpath ) != ''
-            call delete(fullpath)
-        endif
+    let fullpath = a:path . '/id-lang-autogen.map'
+    if ex#os#is('windows')
+        let fullpath = ex#path#translate(fullpath,'windows')
     endif
+    let scripts = [
+                \ '# autogen id-lang.map',
+                \ '*~                    IGNORE',
+                \ '*.bak                 IGNORE',
+                \ '*.bk[0-9]             IGNORE',
+                \ '[sp].*                IGNORE',
+                \ '*/.deps/*             IGNORE',
+                \ '*/.svn/*              IGNORE',
+                \ '*.svn-base            IGNORE',
+                \ '.git/*                IGNORE',
+                \ '.exvim*/*             IGNORE',
+                \ '*.err                 IGNORE',
+                \ '*.exe                 IGNORE',
+                \ '*.lnk                 IGNORE',
+                \ '*.min.js              IGNORE',
+                \ ]
+
+    " set file ignore pattern
+    let file_ignore_pattern = vimentry#get('file_ignore_pattern',[])
+    for item in file_ignore_pattern 
+        if item == ''
+            continue
+        endif
+        silent call add ( scripts, item.'    IGNORE')
+    endfor
+
+    " set file fitlers
+    let file_filters = vimentry#get('file_filter',[])
+    if empty(file_filters)
+        let file_filters = s:default_id_file_filter
+    endif
+    for item in file_filters 
+        if item == ''
+            continue
+        endif
+        silent call add ( scripts, '*.'.item.'    text')
+    endfor
+
+    " save to file
+    call writefile( scripts, fullpath, 'b' )
 endfunction
 
 " exconfig#update_exvim_files {{{
