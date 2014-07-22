@@ -174,19 +174,20 @@ function exconfig#apply()
 
         let g:exES_Cscope = g:exvim_folder.'/cscope.out'
         silent call g:exCS_ConnectCscopeFile()
-    " endif
+        " endif
 
-    " macro highlight
-    if vimentry#check('enable_macrohl', 'true')
-        " TODO: silent call g:exMH_InitMacroList(g:exES_Macro)
-    endif
+        " macro highlight
+        if vimentry#check('enable_macrohl', 'true')
+            " TODO: silent call g:exMH_InitMacroList(g:exES_Macro)
+        endif
 
-    if vimentry#check('enable_restore_bufs', 'true')
-        let g:ex_restore_info = g:exvim_folder.'/restore_info'
-        autocmd VimLeave * call ex#save_restore_info ()
-        " DISABLE: call exUtility#RestoreLastEditBuffers ()
-        call ex#restore_lasteditbuffers()
-        autocmd VimEnter * call ex#restore_lasteditbuffers()
+        if vimentry#check('enable_restore_bufs', 'true')
+            let g:ex_restore_info = g:exvim_folder.'/restore_info'
+            autocmd VimLeave * call ex#save_restore_info ()
+            " DISABLE: call exUtility#RestoreLastEditBuffers ()
+            call ex#restore_lasteditbuffers()
+            autocmd VimEnter * call ex#restore_lasteditbuffers()
+        endif
     endif
 
 
@@ -602,24 +603,24 @@ endfunction
 
 " exconfig#gen_sh_update_idutils {{{
 let s:default_id_file_filter = [
-    \ 'h', 'h++', 'h.in', 'H', 'hh', 'hp', 'hpp', 'hxx', 'inl',
-    \ 'c', 'C', 'cc', 'cp', 'cpp', 'cxx',
-    \ 'cs',
-    \ 'm',
-    \ 'hlsl', 'vsh', 'psh', 'fx', 'fxh', 'cg', 'shd',
-    \ 'asm', 'ASM', 's', 'S',
-    \ 'py', 'pyx', 'pxd', 'scons',
-    \ 'rb',
-    \ 'js', 'as', 'ts', 'coffee',
-    \ 'lua',
-    \ 'ms',
-    \ 'pl', 'pm',
-    \ 'vim',
-    \ 'html', 'htm', 'shtml', 'stm',
-    \ 'xml', 'mms', 'glm',
-    \ 'json',
-    \ 'l', 'lex', 'y', 'yacc',
-    \ ]
+            \ 'h', 'h++', 'h.in', 'H', 'hh', 'hp', 'hpp', 'hxx', 'inl',
+            \ 'c', 'C', 'cc', 'cp', 'cpp', 'cxx',
+            \ 'cs',
+            \ 'm',
+            \ 'hlsl', 'vsh', 'psh', 'fx', 'fxh', 'cg', 'shd',
+            \ 'asm', 'ASM', 's', 'S',
+            \ 'py', 'pyx', 'pxd', 'scons',
+            \ 'rb',
+            \ 'js', 'as', 'ts', 'coffee',
+            \ 'lua',
+            \ 'ms',
+            \ 'pl', 'pm',
+            \ 'vim',
+            \ 'html', 'htm', 'shtml', 'stm',
+            \ 'xml', 'mms', 'glm',
+            \ 'json',
+            \ 'l', 'lex', 'y', 'yacc',
+            \ ]
 
 function exconfig#gen_sh_update_idutils(path)
     " check if mkid command executable
