@@ -181,13 +181,16 @@ function exconfig#apply()
         " TODO: silent call g:exMH_InitMacroList(g:exES_Macro)
     endif
 
+    " buffer restore
     if vimentry#check('enable_restore_bufs', 'true')
-        call ex#set_restore_info(g:exvim_folder.'/restore_info')
-        call ex#restore_lasteditbuffers()
+        if vimentry#is_first_time()
+            call ex#set_restore_info(g:exvim_folder.'/restore_info')
+            call ex#restore_lasteditbuffers()
 
-        augroup ex_restore_info
-            au! VimLeave * call ex#save_restore_info ()
-        augroup END
+            augroup ex_restore_info
+                au! VimLeave * call ex#save_restore_info ()
+            augroup END
+        endif
     endif
 
 
