@@ -13,6 +13,24 @@ function exconfig#reset()
     let &tags=s:old_tags
 endfunction
 
+" exconfig#edit {{{
+function exconfig#edit_cur_vimentry()
+    let project_name = vimentry#get('project_name')
+    let project_cwd = g:exvim_project_root
+    if project_name == ''
+        call ex#error("Can't find vimentry setting 'project_name'.")
+        return
+    endif
+    if  findfile( project_name.'.exvim', escape(project_cwd,' \') ) != ""
+        let vimentry_file = project_name . '.exvim'
+        call ex#hint( 'edit vimentry file: ' . vimentry_file )
+        call ex#window#goto_edit_window()
+        silent exec 'e ' . project_cwd . '/' . vimentry_file
+    else
+        call ex#warning("can't find current vimentry file")
+    endif
+endfunction
+
 " exconfig#apply {{{
 function exconfig#apply()
 
@@ -179,13 +197,16 @@ function exconfig#apply()
         " TODO: silent call g:exMH_InitMacroList(g:exES_Macro)
     endif
 
+    " buffer restore
     if vimentry#check('enable_restore_bufs', 'true')
-        call ex#set_restore_info(g:exvim_folder.'/restore_info')
-        call ex#restore_lasteditbuffers()
+        if vimentry#is_first_time()
+            call ex#set_restore_info(g:exvim_folder.'/restore_info')
+            call ex#restore_lasteditbuffers()
 
-        augroup ex_restore_info
-            au! VimLeave * call ex#save_restore_info ()
-        augroup END
+            augroup ex_restore_info
+                au! VimLeave * call ex#save_restore_info ()
+            augroup END
+        endif
     endif
 
 
