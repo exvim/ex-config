@@ -170,12 +170,25 @@ function exconfig#apply()
     " set cscope file path
     if vimentry#check('enable_cscope', 'true')
         " TODO: silent call g:exCS_ConnectCscopeFile()
-    endif
+        call exconfig#gen_sh_update_cscope(g:exvim_folder)
+
+        let g:exES_Cscope = g:exvim_folder.'/cscope.out'
+        silent call g:exCS_ConnectCscopeFile()
+    " endif
 
     " macro highlight
     if vimentry#check('enable_macrohl', 'true')
         " TODO: silent call g:exMH_InitMacroList(g:exES_Macro)
     endif
+
+    if vimentry#check('enable_restore_bufs', 'true')
+        let g:ex_restore_info = g:exvim_folder.'/restore_info'
+        autocmd VimLeave * call ex#save_restore_info ()
+        " DISABLE: call exUtility#RestoreLastEditBuffers ()
+        call ex#restore_lasteditbuffers()
+        autocmd VimEnter * call ex#restore_lasteditbuffers()
+    endif
+
 
     " TODO:
     " " set vimentry references
@@ -464,6 +477,54 @@ function exconfig#gen_sh_update_ctags(path)
     " save to file
     call writefile ( scripts, fullpath )
 endfunction
+" --------------------------------------------------
+" echo "  |- generate cscope.out"
+" cscope -kb -i cscope.files
+" # cscope -b
+" if [ -f "./cscope.files" ]; then
+" echo "  |- move cscope.files to ./${vimfiles_path}/cscope.files"
+" mv -f "cscope.files" "./${vimfiles_path}/cscope.files"
+" fi
+" if [ -f "./cscope.out" ]; then
+" echo "  |- move cscope.out to ./${vimfiles_path}/cscope.out"
+" mv -f "cscope.out" "./${vimfiles_path}/cscope.out"
+" fi
+" echo "  |- done!"
+" --------------------------------------------------
+
+" exconfig#gen_sh_update_cscope {{{
+function exconfig#gen_sh_update_cscope(path)
+    " get cscope cmd
+    let cscope_cmd = 'cscope'
+    if executable('cscope')
+        let cscope_cmd = 'cscope'
+    else
+        call ex#warning("Can't find cscope command in your system. Please install it first!")
+    endif
+
+    " get cscope options
+    let cscope_optioins = '-kb -i'
+
+    " generate scripts
+    if ex#os#is('windows')
+        call ex#warning("TODO: not implement")
+    else
+        let fullpath = a:path . '/update-cscope.sh'
+        let scripts = [
+                    \ '#!/bin/bash'                                ,
+                    \ 'export DEST="'.a:path.'"'                   ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                    \ 'export CSCOPE_CMD="'.cscope_cmd.'"'         ,
+                    \ 'export OPTIONS="'.cscope_optioins.'"'        ,
+                    \ 'export TMP="./cscope.out"'                 ,
+                    \ 'export TARGET="${DEST}/cscope.out"'               ,
+                    \ 'sh ${TOOLS}/shell/bash/update-cscope.sh'      ,
+                    \ ]
+    endif
+
+    " save to file
+    call writefile ( scripts, fullpath )
+endfunction
 
 " exconfig#gen_sh_update_symbols {{{
 function exconfig#gen_sh_update_symbols(path)
@@ -709,6 +770,12 @@ function exconfig#update_exvim_files()
         let cmd .= shell_exec . ' ' . path.'update-idutils'.suffix
         let and = shell_and
     endif
+
+    "update cscope
+
+    let cmd .= and
+    let cmd .= shell_exec . ' ' . path.'update-cscope'.suffix
+    let and = shell_and
 
     let cmd .= shell_pause
     call ex#hint('exVim Updating...')
