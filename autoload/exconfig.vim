@@ -169,25 +169,23 @@ function exconfig#apply()
 
     " set cscope file path
     if vimentry#check('enable_cscope', 'true')
-        " TODO: silent call g:exCS_ConnectCscopeFile()
         call exconfig#gen_sh_update_cscope(g:exvim_folder)
-
         let g:exES_Cscope = g:exvim_folder.'/cscope.out'
         silent call g:exCS_ConnectCscopeFile()
-        " endif
+    endif
 
-        " macro highlight
-        if vimentry#check('enable_macrohl', 'true')
-            " TODO: silent call g:exMH_InitMacroList(g:exES_Macro)
-        endif
+    " macro highlight
+    if vimentry#check('enable_macrohl', 'true')
+        " TODO: silent call g:exMH_InitMacroList(g:exES_Macro)
+    endif
 
-        if vimentry#check('enable_restore_bufs', 'true')
-            let g:ex_restore_info = g:exvim_folder.'/restore_info'
-            autocmd VimLeave * call ex#save_restore_info ()
-            " DISABLE: call exUtility#RestoreLastEditBuffers ()
-            call ex#restore_lasteditbuffers()
-            autocmd VimEnter * call ex#restore_lasteditbuffers()
-        endif
+    if vimentry#check('enable_restore_bufs', 'true')
+        call ex#set_restore_info(g:exvim_folder.'/restore_info')
+        call ex#restore_lasteditbuffers()
+
+        augroup ex_restore_info
+            au! VimLeave * call ex#save_restore_info ()
+        augroup END
     endif
 
 
@@ -478,6 +476,7 @@ function exconfig#gen_sh_update_ctags(path)
     " save to file
     call writefile ( scripts, fullpath )
 endfunction
+
 " --------------------------------------------------
 " echo "  |- generate cscope.out"
 " cscope -kb -i cscope.files
@@ -772,11 +771,12 @@ function exconfig#update_exvim_files()
         let and = shell_and
     endif
 
-    "update cscope
-
-    let cmd .= and
-    let cmd .= shell_exec . ' ' . path.'update-cscope'.suffix
-    let and = shell_and
+    " update cscope
+    if vimentry#check('enable_cscope','true')
+        let cmd .= and
+        let cmd .= shell_exec . ' ' . path.'update-cscope'.suffix
+        let and = shell_and
+    endif
 
     let cmd .= shell_pause
     call ex#hint('exVim Updating...')
