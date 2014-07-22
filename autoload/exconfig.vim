@@ -13,6 +13,24 @@ function exconfig#reset()
     let &tags=s:old_tags
 endfunction
 
+" exconfig#edit {{{
+function exconfig#edit_cur_vimentry()
+    let project_name = vimentry#get('project_name')
+    let project_cwd = g:exvim_project_root
+    if project_name == ''
+        call ex#error("Can't find vimentry setting 'project_name'.")
+        return
+    endif
+    if  findfile( project_name.'.exvim', escape(project_cwd,' \') ) != ""
+        let vimentry_file = project_name . '.exvim'
+        call ex#hint( 'edit vimentry file: ' . vimentry_file )
+        call ex#window#goto_edit_window()
+        silent exec 'e ' . project_cwd . '/' . vimentry_file
+    else
+        call ex#warning("can't find current vimentry file")
+    endif
+endfunction
+
 " exconfig#apply {{{
 function exconfig#apply()
 
