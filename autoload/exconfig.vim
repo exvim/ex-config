@@ -774,10 +774,11 @@ function exconfig#update_exvim_files()
     endif
 
     " update cscope
-
-    let cmd .= and
-    let cmd .= shell_exec . ' ' . path.'update-cscope'.suffix
-    let and = shell_and
+    if vimentry#check('enable_cscope','true')
+        let cmd .= and
+        let cmd .= shell_exec . ' ' . path.'update-cscope'.suffix
+        let and = shell_and
+    endif
 
     let cmd .= shell_pause
     call ex#hint('exVim Updating...')
