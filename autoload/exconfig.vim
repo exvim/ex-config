@@ -639,6 +639,7 @@ let s:default_id_file_filter = [
     \ 'pl', 'pm',
     \ 'vim',
     \ 'html', 'htm', 'shtml', 'stm',
+    \ 'css', 'sass', 'scss', 'less',
     \ 'xml', 'mms', 'glm',
     \ 'json',
     \ 'l', 'lex', 'y', 'yacc',
