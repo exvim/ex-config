@@ -745,8 +745,12 @@ function exconfig#gen_sh_update_idutils(path)
         silent call add ( scripts, '*.'.item.'    text')
     endfor
 
+    let scriptText = join(scripts, "\n") 
+    if ex#os#is('windows')
+        let scriptText = substitute(scriptText , '\/', '\\\\', 'g')
+    endif
     " save to file
-    call writefile( scripts, fullpath, 'b' )
+    call writefile( split(scriptText, "\n") , fullpath, 'b' )
 endfunction
 
 " exconfig#update_exvim_files {{{
