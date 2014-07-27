@@ -187,8 +187,8 @@ function exconfig#apply()
 
     " set cscope file path
     if vimentry#check('enable_cscope', 'true')
-        call exconfig#gen_sh_update_cscope(g:exvim_folder)
         call excscope#set_csfile(g:exvim_folder.'/cscope.out')
+        call exconfig#gen_sh_update_cscope(g:exvim_folder)
         call excscope#connect()
     endif
 
