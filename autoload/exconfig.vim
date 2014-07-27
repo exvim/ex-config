@@ -189,7 +189,7 @@ function exconfig#apply()
     if vimentry#check('enable_cscope', 'true')
         call exconfig#gen_sh_update_cscope(g:exvim_folder)
         call excscope#set_csfile(g:exvim_folder.'/cscope.out')
-        silent call g:excs_connect_cscopefile()
+        call excscope#connect()
     endif
 
     " macro highlight
