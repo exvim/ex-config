@@ -199,14 +199,19 @@ function exconfig#apply()
 
     " buffer restore
     if vimentry#check('enable_restore_bufs', 'true')
-        if vimentry#is_first_time()
-            call ex#set_restore_info(g:exvim_folder.'/restore_info')
-            call ex#restore_lasteditbuffers()
+        call ex#set_restore_info(g:exvim_folder.'/restore_info')
 
-            augroup ex_restore_info
-                au! VimLeave * call ex#save_restore_info ()
-            augroup END
+        augroup ex_restore_info
+            au! VimLeave * call ex#save_restore_info ()
+        augroup END
+
+        if vimentry#is_first_time()
+            call ex#restore_lasteditbuffers()
         endif
+    else
+        augroup ex_restore_info
+            au!
+        augroup END
     endif
 
 
