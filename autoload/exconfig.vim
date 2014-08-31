@@ -528,7 +528,20 @@ function exconfig#gen_sh_update_cscope(path)
 
     " generate scripts
     if ex#os#is('windows')
-        call ex#warning("TODO: not implement")
+        let fullpath = a:path . '/update-cscope.bat'
+        let winpath = ex#path#translate(a:path,'windows')
+        let wintoolpath = ex#path#translate(g:ex_tools_path,'windows')
+        let wintoolpath = expand(wintoolpath)
+        let scripts = [
+                    \ '@echo off'                                  ,
+                    \ 'set DEST='.winpath                          ,
+                    \ 'set TOOLS='.wintoolpath                     ,
+                    \ 'set CSCOPE_CMD='.cscope_cmd                   ,
+                    \ 'set OPTIONS='.cscope_optioins                ,
+                    \ 'set TMP=%DEST%\_cscope.out'                 ,
+                    \ 'set TARGET=%DEST%\cscope.out'               ,
+                    \ 'call %TOOLS%\shell\batch\update-cscope.bat' ,
+                    \ ]
     else
         let fullpath = a:path . '/update-cscope.sh'
         let scripts = [
@@ -536,10 +549,10 @@ function exconfig#gen_sh_update_cscope(path)
                     \ 'export DEST="'.a:path.'"'                   ,
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
                     \ 'export CSCOPE_CMD="'.cscope_cmd.'"'         ,
-                    \ 'export OPTIONS="'.cscope_optioins.'"'        ,
-                    \ 'export TMP="./cscope.out"'                 ,
-                    \ 'export TARGET="${DEST}/cscope.out"'               ,
-                    \ 'sh ${TOOLS}/shell/bash/update-cscope.sh'      ,
+                    \ 'export OPTIONS="'.cscope_optioins.'"'       ,
+                    \ 'export TMP="${DEST}/_cscope.out"'           ,
+                    \ 'export TARGET="${DEST}/cscope.out"'         ,
+                    \ 'sh ${TOOLS}/shell/bash/update-cscope.sh'    ,
                     \ ]
     endif
 
