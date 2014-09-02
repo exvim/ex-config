@@ -51,6 +51,16 @@ if &background == "dark"
 
     hi link ex_pj_tree_line NONE
     hi ex_pj_tree_line term=italic ctermfg=11 gui=none guifg=#586e75
+
+    " minibufexpl highlight
+    " =============================
+
+    " hi MBENormal ctermbg=LightGray ctermfg=DarkGray guibg=LightGray guifg=DarkGray
+    " hi MBEChanged ctermbg=Red ctermfg=DarkRed guibg=Red guifg=DarkRed
+    " hi MBEVisibleNormal term=bold cterm=bold ctermbg=Gray ctermfg=Black gui=bold guibg=Gray guifg=Black
+    " hi MBEVisibleChanged term=bold cterm=bold ctermbg=DarkRed ctermfg=Black gui=bold guibg=DarkRed guifg=Black
+    " hi MBEVisibleActiveNormal term=bold cterm=bold ctermbg=Gray ctermfg=Black gui=bold guibg=Gray guifg=Black
+    " hi MBEVisibleActiveChanged term=bold cterm=bold ctermbg=DarkRed ctermfg=Black gui=bold guibg=DarkRed guifg=Black
 else
     " NOTE: keep visual mode words still using its own syntax color  
     hi Visual gui=NONE guifg=NONE guibg=#ddd6c3

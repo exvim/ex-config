@@ -106,7 +106,7 @@ call vimentry#on( 'project_type_changed', function('exconfig#apply_project_type'
 
 " ex#register_plugin register plugins {{{
 " register 3rd-plugins
-call ex#register_plugin( 'minibufexpl', { 'bufname': '-MiniBufExplorer-', 'buftype': 'nofile' } )
+call ex#register_plugin( 'minibufexpl', { 'bufname': '-MiniBufExplorer-', 'buftype': 'nofile', 'actions': ['norecord'] } )
 call ex#register_plugin( 'taglist', { 'bufname': '__Tag_List__', 'buftype': 'nofile', 'actions': ['autoclose'] } )
 call ex#register_plugin( 'tagbar', { 'bufname': '__TagBar__', 'buftype': 'nofile', 'actions': ['autoclose'] } )
 call ex#register_plugin( 'nerdtree', { 'bufname': 'NERD_tree_\d\+', 'buftype': 'nofile' } )
