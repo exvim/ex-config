@@ -204,10 +204,6 @@ function exconfig#apply()
         augroup ex_restore_info
             au! VimLeave * call ex#save_restore_info ()
         augroup END
-
-        if vimentry#is_first_time()
-            call ex#restore_lasteditbuffers()
-        endif
     else
         augroup ex_restore_info
             au!
@@ -232,14 +228,6 @@ function exconfig#apply()
     "     endif
     "   endfor
     " endif
-
-    " ===================================
-    " run customized scripts
-    " ===================================
-
-    if exists('*g:exvim_post_init')
-        call g:exvim_post_init()
-    endif
 
     " ===================================
     " layout windows
@@ -349,6 +337,22 @@ function exconfig#apply()
             doautocmd WinLeave
             call ex#window#goto_edit_window()
         endif
+    endif
+
+    " ===================================
+    " post
+    " ===================================
+
+    " do buffer restore
+    if vimentry#check('enable_restore_bufs', 'true')
+        if vimentry#is_first_time()
+            call ex#restore_lasteditbuffers()
+        endif
+    endif
+
+    " run customized scripts
+    if exists('*g:exvim_post_init')
+        call g:exvim_post_init()
     endif
 endfunction
 

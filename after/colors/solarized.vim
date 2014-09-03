@@ -57,9 +57,9 @@ if &background == "dark"
 
     hi MBENormal ctermfg=14 guifg=#586e75 guibg=#073642 
     hi MBEChanged ctermfg=14 guifg=#dc322f guibg=#073642
-    " hi MBEVisibleNormal term=bold cterm=bold ctermbg=Gray ctermfg=Black gui=bold guibg=Gray guifg=Black
-    " hi MBEVisibleChanged term=bold cterm=bold ctermbg=DarkRed ctermfg=Black gui=bold guibg=DarkRed guifg=Black
-    hi MBEVisibleActiveNormal term=bold cterm=bold ctermfg=9 gui=bold guifg=#073642 guibg=#657b83
+    hi MBEVisibleNormal ctermfg=245 ctermbg=235 guifg=#839496 guibg=#004b56
+    hi MBEVisibleChanged ctermbg=DarkRed ctermfg=Black guifg=#dc322f guibg=#004b56
+    hi MBEVisibleActiveNormal term=bold cterm=bold ctermfg=245 ctermbg=235 gui=bold guifg=#073642 guibg=#657b83
     hi MBEVisibleActiveChanged term=bold cterm=bold ctermbg=DarkRed ctermfg=Black gui=bold guifg=Black guibg=DarkRed
 else
     " NOTE: keep visual mode words still using its own syntax color  
