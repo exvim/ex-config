@@ -91,3 +91,13 @@ hi MyTagListComment ctermfg=DarkGreen guifg=DarkGreen
 " TagListFileName - Used for filenames
 hi clear MyTagListFileName
 hi MyTagListFileName term=bold cterm=bold ctermfg=Black ctermbg=LightBlue gui=bold guifg=Black guibg=LightBlue
+
+" minibufexpl highlight
+" =============================
+
+hi MBENormal ctermbg=LightGray ctermfg=DarkGray guibg=LightGray guifg=DarkGray
+hi MBEChanged ctermbg=Red ctermfg=DarkRed guibg=Red guifg=DarkRed
+hi MBEVisibleNormal term=bold cterm=bold ctermbg=Gray ctermfg=Black gui=bold guibg=Gray guifg=Black
+hi MBEVisibleChanged term=bold cterm=bold ctermbg=DarkRed ctermfg=Black gui=bold guibg=DarkRed guifg=Black
+hi MBEVisibleActiveNormal term=bold cterm=bold ctermbg=Gray ctermfg=Black gui=bold guibg=Gray guifg=Black
+hi MBEVisibleActiveChanged term=bold cterm=bold ctermbg=DarkRed ctermfg=Black gui=bold guibg=DarkRed guifg=Black

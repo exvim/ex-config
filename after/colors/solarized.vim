@@ -55,12 +55,12 @@ if &background == "dark"
     " minibufexpl highlight
     " =============================
 
-    " hi MBENormal ctermbg=LightGray ctermfg=DarkGray guibg=LightGray guifg=DarkGray
-    " hi MBEChanged ctermbg=Red ctermfg=DarkRed guibg=Red guifg=DarkRed
+    hi MBENormal ctermfg=14 guifg=#586e75 guibg=#073642 
+    hi MBEChanged ctermfg=14 guifg=#dc322f guibg=#073642
     " hi MBEVisibleNormal term=bold cterm=bold ctermbg=Gray ctermfg=Black gui=bold guibg=Gray guifg=Black
     " hi MBEVisibleChanged term=bold cterm=bold ctermbg=DarkRed ctermfg=Black gui=bold guibg=DarkRed guifg=Black
-    " hi MBEVisibleActiveNormal term=bold cterm=bold ctermbg=Gray ctermfg=Black gui=bold guibg=Gray guifg=Black
-    " hi MBEVisibleActiveChanged term=bold cterm=bold ctermbg=DarkRed ctermfg=Black gui=bold guibg=DarkRed guifg=Black
+    hi MBEVisibleActiveNormal term=bold cterm=bold ctermfg=9 gui=bold guifg=#073642 guibg=#657b83
+    hi MBEVisibleActiveChanged term=bold cterm=bold ctermbg=DarkRed ctermfg=Black gui=bold guifg=Black guibg=DarkRed
 else
     " NOTE: keep visual mode words still using its own syntax color  
     hi Visual gui=NONE guifg=NONE guibg=#ddd6c3
