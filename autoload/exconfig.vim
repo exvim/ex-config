@@ -83,6 +83,7 @@ function exconfig#apply()
         " let project_types = split( vimentry#get('project_type'), ',' )
     endif
 
+    " TODO: DELME { currently exconfig#gen_sh_update_idutils still use this
     " set folder filter to g:exvim_root_folders and g:exvim_root_exclude_folders
     let folder_filter = copy(vimentry#get('folder_filter', []))
     let g:exvim_root_folders = []
@@ -136,6 +137,7 @@ function exconfig#apply()
             endif
         endfor
     endif
+    " TODO: DELME }
 
     " Building
     let builder = vimentry#get('builder')
@@ -253,7 +255,6 @@ function exconfig#apply()
             silent call exproject#set_file_ignore_patterns( vimentry#get('file_ignore_pattern',[]) )
             silent call exproject#set_folder_filters( vimentry#get('folder_filter',[]) )
             silent call exproject#set_folder_filter_mode( vimentry#get('folder_filter_mode','include') )
-            silent call exproject#set_folder_root_only( vimentry#get('folder_filter_root_only','true') )
 
             silent exec 'EXProject ' . fnameescape(g:ex_project_file)
 
@@ -414,6 +415,7 @@ function exconfig#gen_sh_update_files(path)
                     \ 'call %TOOLS%\shell\batch\update-filelist.bat'    ,
                     \ ]
     else
+        " DELME:
         let folder_pattern = ''
         for name in g:exvim_root_folders
             let folder_pattern .= './' . name . ','
@@ -421,6 +423,19 @@ function exconfig#gen_sh_update_files(path)
         if !empty(g:exvim_root_folders)
             let folder_pattern = strpart( folder_pattern, 0, len(folder_pattern) - 1)
         endif
+
+        " TODO:
+        " let folder_filter = vimentry#get('folder_filter', [])
+        " let folder_pattern = ''
+        " if vimentry#check('folder_filter_mode', 'exclude')
+        "     for name in folder_filter
+        "         let folder_pattern .= -not -path '"*/'.name.'/*"'
+        "     endfor
+        " else
+        "     for name in folder_filter
+        "         let folder_pattern .= -path '"*/'.name.'/*"'
+        "     endfor
+        " endif
 
         let file_pattern = ''
         let file_filters = vimentry#get('file_filter', [])
@@ -734,8 +749,8 @@ function exconfig#gen_sh_update_idutils(path)
                 \ '*.min.js              IGNORE',
                 \ ]
 
-    " set folder_filter exclude with folder_filter_root_only is false
-    if vimentry#check('folder_filter_mode', 'exclude') && vimentry#check('folder_filter_root_only', 'false')
+    " set folder_filter exclude
+    if vimentry#check('folder_filter_mode', 'exclude')
         let ignore_folders = vimentry#get('folder_filter',[])
         for item in ignore_folders 
             if item == ''
