@@ -415,27 +415,16 @@ function exconfig#gen_sh_update_files(path)
                     \ 'call %TOOLS%\shell\batch\update-filelist.bat'    ,
                     \ ]
     else
-        " DELME:
+        let folder_filter = vimentry#get('folder_filter', [])
         let folder_pattern = ''
-        for name in g:exvim_root_folders
-            let folder_pattern .= './' . name . ','
-        endfor
-        if !empty(g:exvim_root_folders)
-            let folder_pattern = strpart( folder_pattern, 0, len(folder_pattern) - 1)
+        let exclude = '-not'
+        if vimentry#check('folder_filter_mode', 'include')
+            let exclude = ''
         endif
-
-        " TODO:
-        " let folder_filter = vimentry#get('folder_filter', [])
-        " let folder_pattern = ''
-        " if vimentry#check('folder_filter_mode', 'exclude')
-        "     for name in folder_filter
-        "         let folder_pattern .= -not -path '"*/'.name.'/*"'
-        "     endfor
-        " else
-        "     for name in folder_filter
-        "         let folder_pattern .= -path '"*/'.name.'/*"'
-        "     endfor
-        " endif
+        for name in folder_filter
+            let folder_pattern .= substitute(name, "\+", "\\\\+", "g") . '|'
+        endfor
+        let folder_pattern = strpart( folder_pattern, 0, len(folder_pattern) - 1)
 
         let file_pattern = ''
         let file_filters = vimentry#get('file_filter', [])
@@ -453,10 +442,13 @@ function exconfig#gen_sh_update_files(path)
                     \ '#!/bin/bash'                                   ,
                     \ 'export DEST="'.a:path.'"'                      ,
                     \ 'export TOOLS="'.expand(g:ex_tools_path).'"'    ,
+                    \ 'export IS_EXCLUDE='.exclude                    ,
                     \ 'export FOLDERS="'.folder_pattern.'"'           ,
                     \ 'export FILE_SUFFIXS="'.file_pattern.'"'        ,
                     \ 'export TMP="${DEST}/_files"'                   ,
+                    \ 'export TMP2="${DEST}/_idutils_files"'          ,
                     \ 'export TARGET="${DEST}/files"'                 ,
+                    \ 'export TARGET2="${DEST}/idutils-files"'        ,
                     \ 'source ${TOOLS}/shell/bash/update-filelist.sh' ,
                     \ ]
     endif
