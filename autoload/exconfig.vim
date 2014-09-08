@@ -762,6 +762,7 @@ function exconfig#gen_sh_update_idutils(path)
                 \ '*.min.js              IGNORE',
                 \ ]
 
+    " NOTE: no used at all. id-utils can not ignore folder
     " set folder_filter exclude
     if vimentry#check('folder_filter_mode', 'exclude')
         let ignore_folders = vimentry#get('folder_filter',[])
