@@ -366,35 +366,30 @@ function exconfig#gen_sh_update_files(path)
             call ex#warning("Can't find gawk command in your system. Please install it first!")
         endif
 
-        let folder_pattern = ""
-        let use_folder_pattern = 0
-        for name in g:exvim_root_folders
-            let folder_pattern .= '"' . name . '",'
-        endfor
-        if !empty(g:exvim_root_folders)
-            let use_folder_pattern = 1
-            let folder_pattern = strpart( folder_pattern, 0, len(folder_pattern) - 1)
+        let gawk_suffix = 'exc'
+        if vimentry#check('folder_filter_mode', 'include')
+            let gawk_suffix = 'inc'
+        endif
+
+        let folder_filter = vimentry#get('folder_filter', [])
+        let folder_pattern_gawk = ''
+        if !empty(folder_filter)
+            for name in folder_filter
+                let folder_pattern_gawk .= '.*\\\/'.name.'\\\/.*|'
+            endfor
+            let folder_pattern_gawk = strpart( folder_pattern_gawk, 0, len(folder_pattern_gawk) - 1)
         endif
 
         let file_pattern = ''
-        let file_filters = vimentry#get('file_filter', [])
-        if !empty(file_filters)
-            for name in file_filters
-                let file_pattern .= '*.' . toupper(name) . ' '
-            endfor
-        else
-            let file_pattern=''
-        endif
-
         let file_pattern_gawk = ''
         let file_filters = vimentry#get('file_filter', [])
         if !empty(file_filters)
             for name in file_filters
-                let file_pattern_gawk .= '\\.' . name . '$|'
+                let file_pattern .= '*.' . toupper(name) . ' '
+                let file_pattern_gawk .= '\\\\.' . name . '$|'
             endfor
+            let file_pattern = strpart( file_pattern, 0, len(file_pattern) - 1)
             let file_pattern_gawk = strpart( file_pattern_gawk, 0, len(file_pattern_gawk) - 1)
-        else
-            let file_pattern_gawk=''
         endif
 
         let fullpath = a:path . '/update-filelist.bat'
@@ -402,54 +397,79 @@ function exconfig#gen_sh_update_files(path)
         let wintoolpath = ex#path#translate(g:ex_tools_path,'windows')
         let wintoolpath = expand(wintoolpath)
         let scripts = [
-                    \ '@echo off'                                       ,
-                    \ 'set DEST='.winpath                               ,
-                    \ 'set TOOLS='.wintoolpath                          ,
-                    \ 'set FOLDERS='.folder_pattern                     ,
-                    \ 'set USE_FOLDERS='.use_folder_pattern             ,
-                    \ 'set FILE_SUFFIXS='.file_pattern                  ,
-                    \ 'set FILE_FILTER_PATTERN="'.file_pattern_gawk.'"' ,
-                    \ 'set TMP=%DEST%\_files_gawk'                      ,
-                    \ 'set TMP2=%DEST%\_files'                          ,
-                    \ 'set TARGET=%DEST%\files'                         ,
-                    \ 'call %TOOLS%\shell\batch\update-filelist.bat'    ,
+                    \ '@echo off'                                           ,
+                    \ 'set DEST='.winpath                                   ,
+                    \ 'set TOOLS='.wintoolpath                              ,
+                    \ 'set FILE_SUFFIXS='.file_pattern                      ,
+                    \ 'set GAWK_SUFFIX='.gawk_suffix                        ,
+                    \ 'set FILE_FILTER_PATTERN="'.file_pattern_gawk.'"'     ,
+                    \ 'set FOLDER_FILTER_PATTERN="'.folder_pattern_gawk.'"' ,
+                    \ 'set TMP=%DEST%\_files_gawk'                          ,
+                    \ 'set TMP2=%DEST%\_files'                              ,
+                    \ 'set TARGET=%DEST%\files'                             ,
+                    \ 'set ID_TARGET="${DEST}\idutils-files"'               ,
+                    \ 'call %TOOLS%\shell\batch\update-filelist.bat'        ,
                     \ ]
     else
-        let folder_filter = vimentry#get('folder_filter', [])
-        let folder_pattern = ''
+        " DISABLE
+        " let gawk_suffix = 'exc'
+        " if vimentry#check('folder_filter_mode', 'include')
+        "     let gawk_suffix = 'inc'
+        " endif
+        " let folder_pattern_gawk = ''
+        " if !empty(folder_filter)
+        "     for name in folder_filter
+        "         let folder_pattern_gawk .= '.*\\\/'.name.'\\\/.*|'
+        "     endfor
+        "     let folder_pattern_gawk = strpart( folder_pattern_gawk, 0, len(folder_pattern_gawk) - 1)
+        " endif
+        " let file_pattern_gawk = ''
+        " if !empty(file_filters)
+        "     for name in file_filters
+        "         let file_pattern_gawk .= '\\\\.' . name . '$|'
+        "     endfor
+        "     let file_pattern_gawk = strpart( file_pattern_gawk, 0, len(file_pattern_gawk) - 1)
+        " endif
+        " \ 'export GAWK_SUFFIX='.gawk_suffix                         ,
+        " \ 'export FILE_FILTER_PATTERN="'.file_pattern_gawk.'"'      ,
+        " \ 'export FOLDER_FILTER_PATTERN="'.folder_pattern_gawk.'"'  ,
+
         let exclude = '-not'
         if vimentry#check('folder_filter_mode', 'include')
             let exclude = ''
         endif
-        for name in folder_filter
-            let folder_pattern .= substitute(name, "\+", "\\\\+", "g") . '|'
-        endfor
-        let folder_pattern = strpart( folder_pattern, 0, len(folder_pattern) - 1)
 
-        let file_pattern = ''
+        let folder_filter = vimentry#get('folder_filter', [])
+        let folder_pattern = ''
+        if !empty(folder_filter)
+            for name in folder_filter
+                let folder_pattern .= substitute(name, "\+", "\\\\+", "g") . '|'
+            endfor
+            let folder_pattern = strpart( folder_pattern, 0, len(folder_pattern) - 1)
+        endif
+
+        let file_pattern = '.*'
         let file_filters = vimentry#get('file_filter', [])
         if !empty(file_filters)
+            let file_pattern = ''
             for name in file_filters
-                let file_pattern .= substitute(name, "\+", "\\\\+", "g") . '|'
+                let file_pattern .= name . '|'
             endfor
             let file_pattern = strpart( file_pattern, 0, len(file_pattern) - 1)
-        else
-            let file_pattern='.*'
         endif
 
         let fullpath = a:path . '/update-filelist.sh'
         let scripts = [
-                    \ '#!/bin/bash'                                   ,
-                    \ 'export DEST="'.a:path.'"'                      ,
-                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"'    ,
-                    \ 'export IS_EXCLUDE='.exclude                    ,
-                    \ 'export FOLDERS="'.folder_pattern.'"'           ,
-                    \ 'export FILE_SUFFIXS="'.file_pattern.'"'        ,
-                    \ 'export TMP="${DEST}/_files"'                   ,
-                    \ 'export TMP2="${DEST}/_idutils_files"'          ,
-                    \ 'export TARGET="${DEST}/files"'                 ,
-                    \ 'export TARGET2="${DEST}/idutils-files"'        ,
-                    \ 'source ${TOOLS}/shell/bash/update-filelist.sh' ,
+                    \ '#!/bin/bash'                                             ,
+                    \ 'export DEST="'.a:path.'"'                                ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"'              ,
+                    \ 'export IS_EXCLUDE='.exclude                              ,
+                    \ 'export FOLDERS="'.folder_pattern.'"'                     ,
+                    \ 'export FILE_SUFFIXS="'.file_pattern.'"'                  ,
+                    \ 'export TMP="${DEST}/_files"'                             ,
+                    \ 'export TARGET="${DEST}/files"'                           ,
+                    \ 'export ID_TARGET="${DEST}/idutils-files"'                ,
+                    \ 'source ${TOOLS}/shell/bash/update-filelist.sh'           ,
                     \ ]
     endif
 
