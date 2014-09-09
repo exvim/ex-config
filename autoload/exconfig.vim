@@ -404,16 +404,16 @@ function exconfig#gen_sh_update_files(path)
 
         let fullpath = a:path . '/update-filelist.sh'
         let scripts = [
-                    \ '#!/bin/bash'                                             ,
-                    \ 'export DEST="'.a:path.'"'                                ,
-                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"'              ,
-                    \ 'export IS_EXCLUDE='.exclude                              ,
-                    \ 'export FOLDERS="'.folder_pattern.'"'                     ,
-                    \ 'export FILE_SUFFIXS="'.file_pattern.'"'                  ,
-                    \ 'export TMP="${DEST}/_files"'                             ,
-                    \ 'export TARGET="${DEST}/files"'                           ,
-                    \ 'export ID_TARGET="${DEST}/idutils-files"'                ,
-                    \ 'source ${TOOLS}/shell/bash/update-filelist.sh'           ,
+                    \ '#!/bin/bash'                                ,
+                    \ 'export DEST="'.a:path.'"'                   ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                    \ 'export IS_EXCLUDE='.exclude                 ,
+                    \ 'export FOLDERS="'.folder_pattern.'"'        ,
+                    \ 'export FILE_SUFFIXS="'.file_pattern.'"'     ,
+                    \ 'export TMP="${DEST}/_files"'                ,
+                    \ 'export TARGET="${DEST}/files"'              ,
+                    \ 'export ID_TARGET="${DEST}/idutils-files"'   ,
+                    \ 'sh ${TOOLS}/shell/bash/update-filelist.sh'  ,
                     \ ]
     endif
 
@@ -470,7 +470,7 @@ function exconfig#gen_sh_update_ctags(path)
                     \ 'export OPTIONS="'.ctags_optioins.'"'        ,
                     \ 'export TMP="${DEST}/_tags"'                 ,
                     \ 'export TARGET="${DEST}/tags"'               ,
-                    \ 'source ${TOOLS}/shell/bash/update-tags.sh'  ,
+                    \ 'sh ${TOOLS}/shell/bash/update-tags.sh'      ,
                     \ ]
     endif
 
@@ -516,8 +516,8 @@ function exconfig#gen_sh_update_cscope(path)
                     \ '@echo off'                                  ,
                     \ 'set DEST='.winpath                          ,
                     \ 'set TOOLS='.wintoolpath                     ,
-                    \ 'set CSCOPE_CMD='.cscope_cmd                   ,
-                    \ 'set OPTIONS='.cscope_optioins                ,
+                    \ 'set CSCOPE_CMD='.cscope_cmd                 ,
+                    \ 'set OPTIONS='.cscope_optioins               ,
                     \ 'set TMP=%DEST%\_cscope.out'                 ,
                     \ 'set TARGET=%DEST%\cscope.out'               ,
                     \ 'call %TOOLS%\shell\batch\update-cscope.bat' ,
@@ -532,7 +532,7 @@ function exconfig#gen_sh_update_cscope(path)
                     \ 'export OPTIONS="'.cscope_optioins.'"'       ,
                     \ 'export TMP="${DEST}/_cscope.out"'           ,
                     \ 'export TARGET="${DEST}/cscope.out"'         ,
-                    \ 'source ${TOOLS}/shell/bash/update-cscope.sh',
+                    \ 'sh ${TOOLS}/shell/bash/update-cscope.sh'    ,
                     \ ]
     endif
 
@@ -564,12 +564,12 @@ function exconfig#gen_sh_update_symbols(path)
     else
         let fullpath = a:path . '/update-symbols.sh'
         let scripts = [
-                    \ '#!/bin/bash'                                  ,
-                    \ 'export DEST="'.a:path.'"'                     ,
-                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"'   ,
-                    \ 'export TMP="${DEST}/_symbols"'                ,
-                    \ 'export TARGET="${DEST}/symbols"'              ,
-                    \ 'source ${TOOLS}/shell/bash/update-symbols.sh' ,
+                    \ '#!/bin/bash'                                ,
+                    \ 'export DEST="'.a:path.'"'                   ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                    \ 'export TMP="${DEST}/_symbols"'              ,
+                    \ 'export TARGET="${DEST}/symbols"'            ,
+                    \ 'sh ${TOOLS}/shell/bash/update-symbols.sh'   ,
                     \ ]
     endif
 
@@ -601,12 +601,12 @@ function exconfig#gen_sh_update_inherits(path)
     else
         let fullpath = a:path . '/update-inherits.sh'
         let scripts = [
-                    \ '#!/bin/bash'                                   ,
-                    \ 'export DEST="'.a:path.'"'                      ,
-                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"'    ,
-                    \ 'export TMP="${DEST}/_inherits"'                ,
-                    \ 'export TARGET="${DEST}/inherits"'              ,
-                    \ 'source ${TOOLS}/shell/bash/update-inherits.sh' ,
+                    \ '#!/bin/bash'                                ,
+                    \ 'export DEST="'.a:path.'"'                   ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                    \ 'export TMP="${DEST}/_inherits"'             ,
+                    \ 'export TARGET="${DEST}/inherits"'           ,
+                    \ 'sh ${TOOLS}/shell/bash/update-inherits.sh'  ,
                     \ ]
     endif
 
@@ -728,12 +728,12 @@ function exconfig#gen_sh_update_idutils(path)
     else
         let fullpath = a:path . '/update-idutils.sh'
         let scripts = [
-                    \ '#!/bin/bash'                                  ,
-                    \ 'export DEST="'.a:path.'"'                     ,
-                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"'   ,
-                    \ 'export TMP="${DEST}/_ID"'                     ,
-                    \ 'export TARGET="${DEST}/ID"'                   ,
-                    \ 'source ${TOOLS}/shell/bash/update-idutils.sh' ,
+                    \ '#!/bin/bash'                                ,
+                    \ 'export DEST="'.a:path.'"'                   ,
+                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                    \ 'export TMP="${DEST}/_ID"'                   ,
+                    \ 'export TARGET="${DEST}/ID"'                 ,
+                    \ 'sh ${TOOLS}/shell/bash/update-idutils.sh'   ,
                     \ ]
     endif
 
