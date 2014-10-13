@@ -634,6 +634,7 @@ let s:default_id_file_filter = [
     \ 'xml', 'mms', 'glm',
     \ 'json',
     \ 'l', 'lex', 'y', 'yacc',
+    \ 'hrl', 'erl',
     \ ]
 
 function exconfig#gen_sh_update_idutils(path)
