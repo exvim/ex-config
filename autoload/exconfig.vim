@@ -89,7 +89,7 @@ function exconfig#apply()
     call exqfix#set_compiler(builder)
     call exqfix#set_qfix_file(g:exvim_folder.'/errors.qfix')
 
-    if mapcheck('<leader>bb','n') != ""
+    if maparg('<leader>bb','n') != ""
         nunmap <leader>bb
     endif
     let build_cmd = ":call exqfix#build('".build_opt."')<CR>"
@@ -205,7 +205,7 @@ function exconfig#apply()
             " TODO: add dirty message in ex-project window and hint user to press \R for refresh
 
             " bind key mapping
-            if mapcheck('<leader>fc','n') != ""
+            if maparg('<leader>fc','n') != ""
                 nunmap <leader>fc
             endif
             call exproject#register_hotkey( 100, 0, '<leader>fc', ":EXProjectFind<CR>", 'Find current edit buffer in project window.' )
@@ -253,7 +253,7 @@ function exconfig#apply()
             endif
 
             " bind key mapping
-            if mapcheck('<leader>fc','n') != ""
+            if maparg('<leader>fc','n') != ""
                 nunmap <leader>fc
             endif
             nnoremap <unique> <leader>fc :NERDTreeFind<CR>
