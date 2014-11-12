@@ -212,12 +212,12 @@ function exconfig#apply()
 
             if has('gui_running')
                 if has ('mac')
-                    if mapcheck('Ø','n') != ""
+                    if maparg('Ø','n') != ""
                         nunmap Ø
                     endif
                     call exproject#register_hotkey( 101, 0, 'Ø', ":EXProjectOpen<CR>:redraw<CR>/", 'Open project window and stay in search mode.' )
                 else
-                    if mapcheck('<M-O>','n') != ""
+                    if maparg('<M-O>','n') != ""
                         nunmap <M-O>
                     endif
                     call exproject#register_hotkey( 101, 0, '<M-O>', ":EXProjectOpen<CR>:redraw<CR>/", 'Open project window and stay in search mode.' )
@@ -260,12 +260,12 @@ function exconfig#apply()
 
             if has('gui_running') "  the <alt> key is only available in gui mode.
                 if has ('mac')
-                    if mapcheck('Ø','n') != ""
+                    if maparg('Ø','n') != ""
                         nunmap Ø
                     endif
                     nnoremap <unique> Ø :NERDTreeFind<CR>:redraw<CR>/
                 else
-                    if mapcheck('<M-O>','n') != ""
+                    if maparg('<M-O>','n') != ""
                         nunmap <M-O>
                     endif
                     nnoremap <unique> <M-O> :NERDTreeFind<CR>:redraw<CR>/
