@@ -13,7 +13,7 @@ hi exTargetLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=DarkYellow
 " =============================
 
 hi clear EX_HL_cursorhl
-hi EX_HL_cursorhl gui=none guibg=White term=none cterm=none ctermbg=white 
+hi EX_HL_cursorhl gui=none guibg=White term=none cterm=none ctermbg=white
 
 hi clear EX_HL_label1
 hi EX_HL_label1 gui=none guibg=lightcyan term=none cterm=none ctermbg=lightcyan
@@ -77,16 +77,16 @@ hi MyTagListTagName term=bold cterm=none ctermfg=Black ctermbg=DarkYellow gui=no
 
 " TagListTagScope - Used for tag scope
 hi clear MyTagListTagScope
-hi MyTagListTagScope term=NONE cterm=NONE ctermfg=Blue gui=NONE guifg=Blue 
+hi MyTagListTagScope term=NONE cterm=NONE ctermfg=Blue gui=NONE guifg=Blue
 
 " TagListTitle    - Used for tag titles
 hi clear MyTagListTitle
-" hi MyTagListTitle term=bold cterm=bold ctermfg=DarkRed ctermbg=LightGray gui=bold guifg=DarkRed guibg=LightGray 
-hi MyTagListTitle term=bold cterm=bold ctermfg=DarkRed ctermbg=Gray gui=bold guifg=DarkRed guibg=Gray 
+" hi MyTagListTitle term=bold cterm=bold ctermfg=DarkRed ctermbg=LightGray gui=bold guifg=DarkRed guibg=LightGray
+hi MyTagListTitle term=bold cterm=bold ctermfg=DarkRed ctermbg=Gray gui=bold guifg=DarkRed guibg=Gray
 
 " TagListComment  - Used for comments
 hi clear MyTagListComment
-hi MyTagListComment ctermfg=DarkGreen guifg=DarkGreen 
+hi MyTagListComment ctermfg=DarkGreen guifg=DarkGreen
 
 " TagListFileName - Used for filenames
 hi clear MyTagListFileName
@@ -101,3 +101,8 @@ hi MBEVisibleNormal term=bold cterm=bold ctermbg=Gray ctermfg=Black gui=bold gui
 hi MBEVisibleChanged term=bold cterm=bold ctermbg=DarkRed ctermfg=Black gui=bold guibg=DarkRed guifg=Black
 hi MBEVisibleActiveNormal term=bold cterm=bold ctermbg=Gray ctermfg=Black gui=bold guibg=Gray guifg=Black
 hi MBEVisibleActiveChanged term=bold cterm=bold ctermbg=DarkRed ctermfg=Black gui=bold guibg=DarkRed guifg=Black
+
+" better whitespace highlight
+" =============================
+hi clear ExtraWhitespace
+hi link ExtraWhitespace ErrorMsg

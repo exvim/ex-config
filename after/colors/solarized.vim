@@ -1,5 +1,5 @@
 if &background == "dark"
-    " NOTE: keep visual mode words still using its own syntax color  
+    " NOTE: keep visual mode words still using its own syntax color
     hi Visual gui=NONE guifg=NONE guibg=#004b56
 
     " ex
@@ -19,7 +19,7 @@ if &background == "dark"
 
     hi clear EX_HL_label1
     hi EX_HL_label1 gui=none guibg=lightblue term=none cterm=none ctermbg=lightblue
-    
+
     hi clear EX_HL_label2
     hi EX_HL_label2 gui=none guibg=lightmagenta term=none cterm=none ctermbg=darkmagenta
 
@@ -55,14 +55,19 @@ if &background == "dark"
     " minibufexpl highlight
     " =============================
 
-    hi MBENormal ctermfg=14 guifg=#586e75 guibg=#073642 
+    hi MBENormal ctermfg=14 guifg=#586e75 guibg=#073642
     hi MBEChanged ctermfg=14 guifg=#dc322f guibg=#073642
     hi MBEVisibleNormal ctermfg=245 ctermbg=235 guifg=#073642 guibg=#586e75
     hi MBEVisibleChanged ctermfg=Black ctermbg=DarkRed guifg=Black guibg=DarkRed
     hi MBEVisibleActiveNormal term=bold cterm=bold ctermfg=245 ctermbg=235 gui=bold guifg=#073642 guibg=#93a1a1
     hi MBEVisibleActiveChanged term=bold cterm=bold ctermfg=Black ctermbg=Red gui=bold guifg=Black guibg=#dc322f
+
+    " better whitespace highlight
+    " =============================
+    hi clear ExtraWhitespace
+    hi link ExtraWhitespace ErrorMsg
 else
-    " NOTE: keep visual mode words still using its own syntax color  
+    " NOTE: keep visual mode words still using its own syntax color
     hi Visual gui=NONE guifg=NONE guibg=#ddd6c3
 
     " ex
@@ -78,7 +83,7 @@ else
     " =============================
 
     hi clear EX_HL_cursorhl
-    hi EX_HL_cursorhl gui=none guibg=White term=none cterm=none ctermbg=white 
+    hi EX_HL_cursorhl gui=none guibg=White term=none cterm=none ctermbg=white
 
     hi clear EX_HL_label1
     hi EX_HL_label1 gui=none guibg=lightcyan term=none cterm=none ctermbg=lightcyan
@@ -118,12 +123,17 @@ else
     " minibufexpl highlight
     " =============================
 
-    hi MBENormal ctermfg=14 guifg=#93a1a1 guibg=#eee8d5 
+    hi MBENormal ctermfg=14 guifg=#93a1a1 guibg=#eee8d5
     hi MBEChanged ctermfg=14 guifg=#dc322f guibg=#eee8d5
     hi MBEVisibleNormal ctermfg=245 ctermbg=235 guifg=#eee8d5 guibg=#93a1a1
     hi MBEVisibleChanged ctermfg=Black ctermbg=DarkRed guifg=Black guibg=#dc322f
     hi MBEVisibleActiveNormal term=bold cterm=bold ctermfg=245 ctermbg=235 gui=bold guifg=#eee8d5 guibg=#586e75
     hi MBEVisibleActiveChanged term=bold cterm=bold ctermfg=Black ctermbg=Red gui=bold guifg=Black guibg=DarkRed
+
+    " better whitespace highlight
+    " =============================
+    hi clear ExtraWhitespace
+    hi link ExtraWhitespace ErrorMsg
 endif
 
 " vim:ts=4:sw=4:sts=4 et fdm=marker:
