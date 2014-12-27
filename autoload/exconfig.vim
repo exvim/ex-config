@@ -273,7 +273,7 @@ function exconfig#apply()
 
             if vimentry#check( 'folder_filter_mode',  'exclude' )
                 let folder_filter = vimentry#get('folder_filter')
-                if folder_filter == type([])
+                if type(folder_filter) == type([])
                     for pattern in folder_filter
                         silent call add ( g:NERDTreeIgnore, pattern.'[[dir]]' )
                     endfor
