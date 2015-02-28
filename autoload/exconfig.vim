@@ -794,6 +794,7 @@ function exconfig#update_exvim_files()
 
     " update cscope
     if vimentry#check('enable_cscope','true')
+        silent exec 'cscope kill .exvim.' .g:exvim_project_name
         let cmd .= and
         let cmd .= shell_exec . ' ' . path.'update-cscope'.suffix
         let and = shell_and
@@ -802,6 +803,11 @@ function exconfig#update_exvim_files()
     let cmd .= shell_pause
     call ex#hint('exVim Updating...')
     exec '!' . cmd
+    
+    if vimentry#check('enable_cscope','true')
+        silent exec 'cscope a .exvim.' .g:exvim_project_name.'/cscope.out'
+    endif
+
     call ex#hint('exVim Update Finish!')
 endfunction
 
