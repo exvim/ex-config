@@ -44,7 +44,7 @@ function exconfig#apply()
         return
     endif
 
-    " NOTE: we use the dir path of .vimentry instead of getcwd().  
+    " NOTE: we use the dir path of .vimentry instead of getcwd().
     " getcwd
     let filename = expand('%')
     let cwd = ex#path#translate( fnamemodify( filename, ':p:h' ), 'unix' )
@@ -82,6 +82,9 @@ function exconfig#apply()
         " TODO:
         " let project_types = split( vimentry#get('project_type'), ',' )
     endif
+
+    " Editing
+    let &tabstop=str2nr(vimentry#get('tabstop'))
 
     " Building
     let builder = vimentry#get('builder')
@@ -161,9 +164,9 @@ function exconfig#apply()
     " let file_suffixs = vimentry#get('file_filter',[])
     " if len(file_suffixs) > 0
     "     for suffix in file_suffixs
-    "         let file_pattern .= suffix . '|' 
+    "         let file_pattern .= suffix . '|'
     "     endfor
-    "     let file_pattern = '\v\.(' . file_pattern , ')$' 
+    "     let file_pattern = '\v\.(' . file_pattern , ')$'
     " endif
 
     let dir_pattern = ''
@@ -171,11 +174,11 @@ function exconfig#apply()
         let folders = vimentry#get('folder_filter',[])
         if len(folders) > 0
             for folder in folders
-                let dir_pattern .= folder . '|' 
+                let dir_pattern .= folder . '|'
             endfor
             let dir_pattern = strpart( dir_pattern, 0, len(dir_pattern) - 1)
 
-            let dir_pattern = '\v[\/](' . dir_pattern . ')$' 
+            let dir_pattern = '\v[\/](' . dir_pattern . ')$'
         endif
     endif
 
@@ -796,7 +799,7 @@ function exconfig#gen_sh_update_idutils(path)
     " set folder_filter exclude
     if vimentry#check('folder_filter_mode', 'exclude')
         let ignore_folders = vimentry#get('folder_filter',[])
-        for item in ignore_folders 
+        for item in ignore_folders
             if item == ''
                 continue
             endif
@@ -806,7 +809,7 @@ function exconfig#gen_sh_update_idutils(path)
 
     " set file ignore pattern
     let file_ignore_pattern = vimentry#get('file_ignore_pattern',[])
-    for item in file_ignore_pattern 
+    for item in file_ignore_pattern
         if item == ''
             continue
         endif
@@ -818,14 +821,14 @@ function exconfig#gen_sh_update_idutils(path)
     if empty(file_filters)
         let file_filters = s:default_id_file_filter
     endif
-    for item in file_filters 
+    for item in file_filters
         if item == ''
             continue
         endif
         silent call add ( scripts, '*.'.item.'    text')
     endfor
 
-    let scriptText = join(scripts, "\n") 
+    let scriptText = join(scripts, "\n")
     if ex#os#is('windows')
         let scriptText = substitute(scriptText , '\/', '\\\\', 'g')
     endif
@@ -889,7 +892,7 @@ function exconfig#update_exvim_files()
     let cmd .= shell_pause
     call ex#hint('exVim Updating...')
     exec '!' . cmd
-    
+
     if vimentry#check('enable_cscope','true')
         call excscope#connect()
     endif
