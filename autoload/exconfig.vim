@@ -667,6 +667,8 @@ let s:default_id_file_filter = [
     \ 'l', 'lex', 'y', 'yacc',
     \ 'hrl', 'erl',
     \ 'php',
+    \ 'rs',
+    \ 'go',
     \ ]
 
 function exconfig#gen_sh_update_idutils(path)
