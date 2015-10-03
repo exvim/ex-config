@@ -84,7 +84,9 @@ function exconfig#apply()
     endif
 
     " Editing
-    let &tabstop=str2nr(vimentry#get('tabstop'))
+    let indent_stop=str2nr(vimentry#get('indent'))
+    let &tabstop=indent_stop
+    let &shiftwidth=indent_stop
 
     " Building
     let builder = vimentry#get('builder')
