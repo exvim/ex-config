@@ -88,6 +88,13 @@ function exconfig#apply()
     let &tabstop=indent_stop
     let &shiftwidth=indent_stop
 
+    let my_et = vimentry#get('tabs')
+    if my_et == "true"
+        set noexpandtab
+    elseif my_et == "false"
+        set expandtab
+    endif
+
     " Building
     let builder = vimentry#get('builder')
     let build_opt = vimentry#get('build_opt')
