@@ -106,7 +106,7 @@ function exconfig#apply()
         let &tagrelative=0 " set notagrelative
 
         let s:old_tags=&tags
-        set tags+=fnameescape(g:exvim_folder.'/tags')
+        let &tags=fnameescape(s:old_tags.','.g:exvim_folder.'/tags').
 
         call exconfig#gen_sh_update_files(g:exvim_folder)
         call exconfig#gen_sh_update_ctags(g:exvim_folder)
