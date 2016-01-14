@@ -6,10 +6,10 @@ if &background == "dark"
     " =============================
 
     hi clear exConfirmLine
-    hi exConfirmLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
+    hi exConfirmLine gui=none guibg=#458588 term=none cterm=none ctermbg=darkyellow
 
     hi clear exTargetLine
-    hi exTargetLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
+    hi exTargetLine gui=none guibg=#458588 term=none cterm=none ctermbg=darkyellow
 
     " ex-easyhl
     " =============================
