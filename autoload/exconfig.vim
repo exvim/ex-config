@@ -446,7 +446,7 @@ function exconfig#gen_sh_update_files(path)
                     \ 'export TMP="${DEST}/_files"'                ,
                     \ 'export TARGET="${DEST}/files"'              ,
                     \ 'export ID_TARGET="${DEST}/idutils-files"'   ,
-                    \ 'sh ${TOOLS}/shell/bash/update-filelist.sh'  ,
+                    \ 'bash ${TOOLS}/shell/bash/update-filelist.sh'  ,
                     \ ]
     endif
 
