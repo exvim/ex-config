@@ -88,6 +88,10 @@ function exconfig#apply()
     let &tabstop=indent_stop
     let &shiftwidth=indent_stop
 
+    if exists ( ':IndentLinesReset' )
+        exec 'IndentLinesReset '.indent_stop
+    endif
+
     " Building
     let builder = vimentry#get('builder')
     let build_opt = vimentry#get('build_opt')
