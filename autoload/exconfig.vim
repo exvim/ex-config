@@ -95,6 +95,10 @@ function exconfig#apply()
         set expandtab
     endif
 
+    if exists ( ':IndentLinesReset' )
+        exec 'IndentLinesReset '.indent_stop
+    endif
+
     " Building
     let builder = vimentry#get('builder')
     let build_opt = vimentry#get('build_opt')
@@ -113,7 +117,7 @@ function exconfig#apply()
         let &tagrelative=0 " set notagrelative
 
         let s:old_tags=&tags
-        let &tags=fnameescape(g:exvim_folder.'/tags')
+        let &tags=fnameescape(s:old_tags.','.g:exvim_folder.'/tags')
 
         call exconfig#gen_sh_update_files(g:exvim_folder)
         call exconfig#gen_sh_update_ctags(g:exvim_folder)
@@ -453,7 +457,7 @@ function exconfig#gen_sh_update_files(path)
                     \ 'export TMP="${DEST}/_files"'                ,
                     \ 'export TARGET="${DEST}/files"'              ,
                     \ 'export ID_TARGET="${DEST}/idutils-files"'   ,
-                    \ 'sh ${TOOLS}/shell/bash/update-filelist.sh'  ,
+                    \ 'bash ${TOOLS}/shell/bash/update-filelist.sh'  ,
                     \ ]
     endif
 
@@ -501,17 +505,31 @@ function exconfig#gen_sh_update_ctags(path)
                     \ 'call %TOOLS%\shell\batch\update-tags.bat' ,
                     \ ]
     else
-        let fullpath = a:path . '/update-tags.sh'
-        let scripts = [
-                    \ '#!/bin/bash'                                ,
-                    \ 'export DEST="'.a:path.'"'                   ,
-                    \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
-                    \ 'export CTAGS_CMD="'.ctags_cmd.'"'           ,
-                    \ 'export OPTIONS="'.ctags_optioins.'"'        ,
-                    \ 'export TMP="${DEST}/_tags"'                 ,
-                    \ 'export TARGET="${DEST}/tags"'               ,
-                    \ 'sh ${TOOLS}/shell/bash/update-tags.sh'      ,
-                    \ ]
+        if vimentry#check('enable_custom_tags', 'true')
+            let fullpath = a:path . '/update-tags.sh'
+            let sourcepath = vimentry#get('custom_tags_file')
+            let scripts = [
+                        \ '#!/bin/bash'                                 ,
+                        \ 'export DEST="'.a:path.'"'                    ,
+                        \ 'export TARGET="${DEST}/tags"'                ,
+                        \ 'export SOURCE="'.sourcepath.'"'              ,
+                        \ 'export TOOLS="'.expand(g:ex_tools_path).'"'  ,
+                        \ 'export CUSTOM=true'                          ,
+                        \ 'sh ${TOOLS}/shell/bash/update-tags.sh'       ,
+                        \ ]
+        else
+            let fullpath = a:path . '/update-tags.sh'
+            let scripts = [
+                        \ '#!/bin/bash'                                ,
+                        \ 'export DEST="'.a:path.'"'                   ,
+                        \ 'export TOOLS="'.expand(g:ex_tools_path).'"' ,
+                        \ 'export CTAGS_CMD="'.ctags_cmd.'"'           ,
+                        \ 'export OPTIONS="'.ctags_optioins.'"'        ,
+                        \ 'export TMP="${DEST}/_tags"'                 ,
+                        \ 'export TARGET="${DEST}/tags"'               ,
+                        \ 'sh ${TOOLS}/shell/bash/update-tags.sh'      ,
+                        \ ]
+        endif
     endif
 
     " save to file

@@ -6,10 +6,10 @@ if &background == "dark"
     " =============================
 
     hi clear exConfirmLine
-    hi exConfirmLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
+    hi exConfirmLine gui=none guibg=#458588 term=none cterm=none ctermbg=darkyellow
 
     hi clear exTargetLine
-    hi exTargetLine gui=none guibg=#ffe4b3 term=none cterm=none ctermbg=darkyellow
+    hi exTargetLine gui=none guibg=#458588 term=none cterm=none ctermbg=darkyellow
 
     " ex-easyhl
     " =============================
@@ -18,16 +18,16 @@ if &background == "dark"
     hi EX_HL_cursorhl gui=none guibg=darkgray term=none cterm=none ctermbg=darkgray
 
     hi clear EX_HL_label1
-    hi EX_HL_label1 gui=none guifg=#002b36 guibg=lightblue term=none cterm=none ctermbg=lightblue
+    hi EX_HL_label1 gui=none guifg=#32302f guibg=lightblue term=none cterm=none ctermbg=lightblue
 
     hi clear EX_HL_label2
-    hi EX_HL_label2 gui=none guifg=#002b36 guibg=lightmagenta term=none cterm=none ctermbg=darkmagenta
+    hi EX_HL_label2 gui=none guifg=#32302f guibg=lightmagenta term=none cterm=none ctermbg=darkmagenta
 
     hi clear EX_HL_label3
-    hi EX_HL_label3 gui=none guifg=#002b36 guibg=darkyellow term=none cterm=none ctermbg=darkyellow
+    hi EX_HL_label3 gui=none guifg=#32302f guibg=darkyellow term=none cterm=none ctermbg=darkyellow
 
     hi clear EX_HL_label4
-    hi EX_HL_label4 gui=none guifg=#002b36 guibg=lightgreen term=none cterm=none ctermbg=darkgreen
+    hi EX_HL_label4 gui=none guifg=#32302f guibg=lightgreen term=none cterm=none ctermbg=darkgreen
 
     " ex-showmarks highlight
     " =============================
