@@ -88,6 +88,9 @@ function exconfig#apply()
     let &tabstop=indent_stop
     let &shiftwidth=indent_stop
 
+    let expand_tab = vimentry#get('expand_tab')
+    let &expandtab = (expand_tab == "true" ? 1 : 0)
+
     if exists ( ':IndentLinesReset' )
         exec 'IndentLinesReset '.indent_stop
     endif
